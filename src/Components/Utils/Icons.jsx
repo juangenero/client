@@ -12,7 +12,6 @@ export function Eye({ action }) {
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-eye-fill"
       viewBox="0 0 16 16"
       onClick={action}
       onMouseOver={() => (document.body.style.cursor = "pointer")}
@@ -37,7 +36,6 @@ export function Pencil({ action }) {
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-pencil-fill"
       viewBox="0 0 16 16"
       onClick={action}
       onMouseOver={() => (document.body.style.cursor = "pointer")}
@@ -61,7 +59,6 @@ export function Trash({ action }) {
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-trash-fill"
       viewBox="0 0 16 16"
       onClick={action}
       onMouseOver={() => (document.body.style.cursor = "pointer")}

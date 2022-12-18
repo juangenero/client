@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { useState } from "react";
-import { decodeJWT } from "../Controllers/auth.controller.js";
+import { decodeJWT } from "../Services/auth.service.js";
 
 // Crea un contexto para poder usar estados globales en toda la aplicación, independientemente del cantidad de componentes anidados en el DOM
 export const AppContext = createContext();

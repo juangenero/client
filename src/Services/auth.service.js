@@ -6,10 +6,13 @@ import { decodeToken } from "react-jwt";
  * Realiza una petición asíncrona de login al servidor (API)
  * @param {String} username Usuario introducido en el login
  * @param {String} password Contrasseña introducida en el login
- * @param {Method} navigate Método para redirigir en caso de autenticarse correctamente.
- * @param {Method} onHide Método para ocultar el modal de login en caso autenticarse correctamente.
+ * @param {Function} navigate Método para redirigir en caso de autenticarse correctamente.
+ * @param {Function} onHide Método para ocultar el modal de login en caso autenticarse correctamente.
+ * @return mensaje de error o null si todo a ido bien (redirijiendo a Dashboard)
  */
 export async function login(username, password, navigate, onHide, setUser) {
+  let result = null;
+
   await clientAxios
     .post("/login", {
       username: username,
@@ -22,9 +25,11 @@ export async function login(username, password, navigate, onHide, setUser) {
         onHide();
         setUser(decodeJWT()); // Actualizo el estado del usuario para que tenga acceso a Dashboard
         navigate("/dashboard/pets"); // Redireccionar a Dashboard
-      } else console.log("ERROR LOGIN: " + res.data.error); // !!! Pendiente de cambiar y mostrarlo por pantalla
+      } else result = "ERROR LOGIN: " + res.data.error; // !!! Pendiente de cambiar y mostrarlo por pantalla
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {result = "Error en la petición de inicio de sesión ("+ err.code +")"});
+
+    return result;
 }
 
 // Elimina el local store, actualiza el estado del usuario y redirige a la ruta principal

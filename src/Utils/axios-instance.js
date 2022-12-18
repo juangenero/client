@@ -1,8 +1,10 @@
-import { getToken } from "../Controllers/auth.controller.js";
+import { getToken } from "../Services/auth.service.js";
 import axios from "axios";
 
+const baseURL = process.env.REACT_APP_BASE_URL || "http://localhost:3001/api";
+
 const clientAxios = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: baseURL,
 });
 
 /**

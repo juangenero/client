@@ -1,9 +1,9 @@
 import Button from "react-bootstrap/Button";
-import LoginModal from "./LoginModal"; // Componente login con el modal
+import LoginModal from "../Modals/LoginModal"; // Componente login con el modal
 import { useState } from "react"; // Hook de react para el estado del modal
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { AppContext } from "../../../Context/AppContext";
+import { AppContext } from "../../Context/AppContext";
 
 export default function PrivateArea() {
   const [modalShow, setModalShow] = useState(false);

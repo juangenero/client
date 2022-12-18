@@ -2,12 +2,12 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { AppContext } from "../../Context/AppContext";
-import { logout } from "../../Controllers/auth.controller.js";
+import { logout } from "../../Services/auth.service.js";
 
 /**
  * El menú de navegación se renderiza de forma condicional según el usuario que haya iniciado sesión.
  */
-function NavDashboard() {
+function DashboardNav() {
   const { user, setUser } = useContext(AppContext); // Estado del usuario
   const navigate = useNavigate(); // Para redirigir en la opción de cerrar sesión.
 
@@ -48,4 +48,4 @@ function NavDashboard() {
   );
 }
 
-export default NavDashboard;
+export default DashboardNav;
