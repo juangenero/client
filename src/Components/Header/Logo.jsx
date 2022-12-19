@@ -1,6 +1,6 @@
 import Image from "react-bootstrap/Image";
 import { useNavigate } from "react-router-dom";
-import logo from '../../Images/logo.png';
+import logo from '../../Img/logo.png';
 
 export default function Logo() {
   const navigate = useNavigate();

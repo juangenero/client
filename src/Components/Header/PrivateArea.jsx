@@ -1,12 +1,14 @@
 import Button from "react-bootstrap/Button";
 import LoginModal from "../Modals/LoginModal"; // Componente login con el modal
-import { useState } from "react"; // Hook de react para el estado del modal
+import { useState, useContext } from "react"; // Hook de react para el estado del modal
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+
+// Contextos de los estados
+import { LoginContext } from "../../Context/LoginContext";
 import { AppContext } from "../../Context/AppContext";
 
 export default function PrivateArea() {
-  const [modalShow, setModalShow] = useState(false);
+  const { modalShow, setModalShow } = useContext(LoginContext);
   const { user } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -24,6 +26,8 @@ export default function PrivateArea() {
           </Button>
         )
       }
+
+      {/** Llamo a login modal pasandole la propiedad onHide, porque en el "return" del la ventana modal, react no me permite usar el contexto de Login */}
       <LoginModal show={modalShow} onHide={() => setModalShow(false)} />
     </>
   );

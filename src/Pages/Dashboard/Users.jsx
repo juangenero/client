@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { getUsers, deleteUser, resetUsers, reloadUsers } from "../../Services/users.service.js";
+import React, { useEffect, useContext } from "react";
+import { getUsers, resetUsers, reloadUsers } from "../../Services/users.service.js";
 import { Eye, Pencil, Trash } from "../../Components/Utils/Icons.jsx";
+import DeleteUserModal from "../../Components/Modals/DeleteUserModal.jsx";
+import { UserContext } from "../../Context/UserContext";
 
 // Bootstrap
 import Spinner from "react-bootstrap/Spinner";
@@ -9,41 +11,50 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 
 export default function Users() {
-  const [isLoading, setIsLoading] = useState(true); // Estado para comprobar cuando está cargando
-  const [data, setData] = useState(null); // Estado para almacenar los datos obtenidos de la API.
-  const [error, setError] = useState(null); // Estado para almacenar los errores.
+
+  const {
+    userDeleteModalShow, // Boolean que indica que se muestra la ventana modal de eliminar usuario
+    setUserDeleteModalShow,
+    manageUser, // Datos del usuario que se está gestionando (cuando se realizan acciones sobre el)
+    setManageUser,
+    userIsLoading, // Boolean que indica si los usuarios han sido obtenidos desde la API
+    setUserIsLoading,
+    userData, // Datos de los usuarios obtenidos de la API
+    setUserData,
+    userError, // Errores obtenidos al solicitar los datos del usuario de la API
+    setUserError,
+  } = useContext(UserContext);
 
   useEffect(() => {
-    if (isLoading) {
+    if (userIsLoading) {
       // Llamada al método asíncrono
       getUsers()
         .then((res) => {
           // Si la petición se ha ejecutado correctamente
           if (res.status === 200) {
-            setData(res.data); // Guardar datos en el estado
-            setIsLoading(false); // Cambiar el estado, puesto que ya tenemos los datos
+            setUserData(res.data); // Guardar datos en el estado
+            setUserIsLoading(false); // Cambiar el estado, puesto que ya tenemos los datos
           } else {
-            setError("Hubo un error al mostrar los usuarios."); // Almacenar error
-            setIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
+            setUserError("Hubo un error al mostrar los usuarios."); // Almacenar error
+            setUserIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
           }
         })
         .catch(() => {
-          setError("Hubo un error al realizar la solicitud."); // Almacenar error
-          setIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
+          setUserError("Hubo un error al realizar la solicitud."); // Almacenar error
+          setUserIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
         });
     }
-  }, [isLoading]);
+  }, [userIsLoading]);
 
   // Si se ha producido un error, muestra el mensaje
-  if (error) {
+  if (userError) {
     return (
       <>
-        {console.log("render error")}
         <div className="d-flex justify-content-center">
-          <Alert variant="danger">{error}</Alert>
+          <Alert variant="danger">{userError}</Alert>
         </div>
         <div className="d-flex justify-content-center">
-          <Button variant="warning" onClick={() => reloadUsers(setError, setIsLoading)}>
+          <Button variant="warning" onClick={() => reloadUsers(setUserError, setUserIsLoading)}>
             Reintentar
           </Button>
         </div>
@@ -52,10 +63,9 @@ export default function Users() {
   }
 
   // Cuando esté a la espera de la respuesta de la API, renderiza "Cargando..."
-  if (isLoading) {
+  if (userIsLoading) {
     return (
       <>
-        {console.log("render cargando...")}
         <br />
         <div className="d-flex justify-content-center">
           <h1>
@@ -85,13 +95,12 @@ export default function Users() {
           className="mx-1"
           onClick={async () => {
             await resetUsers();
-            reloadUsers(setError, setIsLoading);
+            reloadUsers(setUserError, setUserIsLoading);
           }}
         >
           Reset data
         </Button>
       </div>
-
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -105,7 +114,7 @@ export default function Users() {
           </tr>
         </thead>
         <tbody>
-          {data.map((user) => (
+          {userData.map((user) => (
             <tr key={user.idUsuario}>
               <td>{user.idUsuario}</td>
               <td>{user.nombre}</td>
@@ -130,9 +139,9 @@ export default function Users() {
                 }
                 {
                   <Trash
-                    action={async () => {
-                      await deleteUser(user.idUsuario);
-                      reloadUsers(setError, setIsLoading);
+                    action={() => {
+                      setManageUser({ id: user.idUsuario, email: user.email });
+                      setUserDeleteModalShow(true);
                     }}
                   />
                 }
@@ -141,6 +150,9 @@ export default function Users() {
           ))}
         </tbody>
       </Table>
+
+      {/** Ventanas modales (Se inician en oculto) */}
+      <DeleteUserModal />
     </>
   );
 }

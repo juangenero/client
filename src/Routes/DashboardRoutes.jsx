@@ -1,5 +1,3 @@
-
-
 // Componentes para las rutas
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -7,9 +5,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Users from "../Pages/Dashboard/Users";
 import Pets from "../Pages/Dashboard/Pets";
 
-// Contexto de la aplicación
 import { useContext } from "react";
-import { AppContext } from "../Context/AppContext";
+import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
+import { UserContextProvider } from "../Context/UserContext"; // Contexto del usuario
 
 {
   /**
@@ -28,11 +26,31 @@ function DashboardRoutes() {
 
   return (
     <Routes>
+      {/** Ruta para mostrar y editar perfil */}
       {user.rol ? null : <Route path="/profile" element={<h1>Perfil</h1>} />}
-      {user.rol ? <Route path="/users" element={<Users />} /> : null}
+
+      {/** Ruta para administrar los usuarios */}
+      {user.rol ? (
+        <Route
+          path="/users"
+          element={
+            <UserContextProvider>
+              <Users />
+            </UserContextProvider>
+          }
+        />
+      ) : null}
+
+      {/** Ruta para mostrar y/o administrar las mascotas (Según el rol el componente renderizará distintas opciones) */}
       <Route path="/pets" element={<Pets />} />
+
+      {/** Ruta para las consultas (Según el rol el componente renderizará distintas opciones) */}
       <Route path="/consults" element={<h1>Consultas</h1>} />
+
+      {/** Ruta para administrar las vacunas */}
       {user.rol ? <Route path="/vaccines" element={<h1>Vacunas</h1>} /> : null}
+
+      {/** El resto de rutas no existentes que cuelguen de dashboard, redireccionará a mascotas */}
       <Route path="*" element={<Navigate replace to="/dashboard/pets" />} />
     </Routes>
   );
