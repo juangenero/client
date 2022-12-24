@@ -1,8 +1,10 @@
 import React, { useEffect, useContext } from "react";
-import { getUsers, resetUsers, reloadUsers } from "../../Services/users.service.js";
+import { getAllUsers, resetUsers, reloadUsers } from "../../Services/users.service.js";
 import { Eye, Pencil, Trash } from "../../Components/Utils/Icons.jsx";
 import DeleteUserModal from "../../Components/Modals/DeleteUserModal.jsx";
 import { UserContext } from "../../Context/UserContext";
+import { AppContext } from "../../Context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 // Bootstrap
 import Spinner from "react-bootstrap/Spinner";
@@ -11,6 +13,11 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 
 export default function Users() {
+  const navigate = useNavigate();
+
+  const { user } = useContext(AppContext);
+
+  const { setUserPageIsLoading, setUserPageError, setUserPageData } = useContext(UserContext);
 
   const {
     userDeleteModalShow, // Boolean que indica que se muestra la ventana modal de eliminar usuario
@@ -23,12 +30,13 @@ export default function Users() {
     setUserData,
     userError, // Errores obtenidos al solicitar los datos del usuario de la API
     setUserError,
+    setEditUser,
   } = useContext(UserContext);
 
   useEffect(() => {
     if (userIsLoading) {
       // Llamada al método asíncrono
-      getUsers()
+      getAllUsers()
         .then((res) => {
           // Si la petición se ha ejecutado correctamente
           if (res.status === 200) {
@@ -114,40 +122,56 @@ export default function Users() {
           </tr>
         </thead>
         <tbody>
-          {userData.map((user) => (
-            <tr key={user.idUsuario}>
-              <td>{user.idUsuario}</td>
-              <td>{user.nombre}</td>
-              <td>{user.apellidos}</td>
-              <td>{user.email}</td>
-              <td>{user.fechaAlta}</td>
-              <td>{user.rolUsuario ? "Veterinario" : "Cliente"}</td>
-              <td>
-                {
-                  <Eye
-                    action={() => {
-                      alert("Mostrando usuario con ID " + user.idUsuario);
-                    }}
-                  />
-                }
-                {
-                  <Pencil
-                    action={() => {
-                      alert("Editando usuario con ID " + user.idUsuario);
-                    }}
-                  />
-                }
-                {
-                  <Trash
-                    action={() => {
-                      setManageUser({ id: user.idUsuario, email: user.email });
-                      setUserDeleteModalShow(true);
-                    }}
-                  />
-                }
-              </td>
-            </tr>
-          ))}
+          {userData.map(
+            (
+              userData // Recorro el array generando una fila por cada usuario
+            ) => (
+              <tr key={userData.idUsuario}>
+                <td>{userData.idUsuario}</td>
+                <td>{user.nombre}</td>
+                <td>{userData.apellidos}</td>
+                <td>{userData.email}</td>
+                <td>{userData.fechaAlta}</td>
+                <td>{userData.rolUsuario ? "Veterinario" : "Cliente"}</td>
+                <td>
+                  {
+                    <Eye
+                      action={() => {
+                        setUserPageIsLoading(true); // Indico que UserPage está cargando para que llame a la API
+                        setUserPageError(false); // Elimino los errores que hubiera anteriormente
+                        setUserPageData(null); // Elimino los datos que hubiera anteriormente
+                        navigate("/dashboard/user/" + userData.idUsuario); // Redirige a la página de edición usuario.
+                      }}
+                      disabled={false}
+                    />
+                  }
+                  {
+                    <Pencil
+                      action={() => {
+                        setUserPageIsLoading(true); // Indico que UserPage está cargando para que llame a la API
+                        setUserPageError(false); // Elimino los errores que hubiera anteriormente
+                        setUserPageData(null); // Elimino los datos que hubiera anteriormente
+                        navigate("/dashboard/user/" + userData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
+                      }}
+                    />
+                  }
+                  {
+                    // El usuario logueado no puede eliminar su propio usuario
+                    user.id == userData.idUsuario ? (
+                      <Trash disabled={true} />
+                    ) : (
+                      <Trash
+                        action={() => {
+                          setManageUser({ id: userData.idUsuario, email: userData.email });
+                          setUserDeleteModalShow(true);
+                        }}
+                      />
+                    )
+                  }
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </Table>
 

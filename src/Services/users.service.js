@@ -1,13 +1,22 @@
 import clientAxios from "../Utils/axios-instance.js";
 
-export async function getUsers() {
+export async function getAllUsers() {
   return await clientAxios.get("/users");
+}
+
+export async function getUser(id) {
+  return await clientAxios.get("/user/" + id);
+}
+
+export async function editUser(id) {
+  return await clientAxios.patch("/editUser");
 }
 
 export async function newUser() {}
 
 export async function deleteUser(id) {
-  await clientAxios.post("/deleteUser", { id: id });
+  console.log(id)
+  await clientAxios.delete("/deleteUser/"+ id);
 }
 
 export async function resetUsers() {

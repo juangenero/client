@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 // Contenido de las rutas
 import Users from "../Pages/Dashboard/Users";
 import Pets from "../Pages/Dashboard/Pets";
+import UserPage from "../Pages/Dashboard/UserPage";
 
 import { useContext } from "react";
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
@@ -29,16 +30,36 @@ function DashboardRoutes() {
       {/** Ruta para mostrar y editar perfil */}
       {user.rol ? null : <Route path="/profile" element={<h1>Perfil</h1>} />}
 
-      {/** Ruta para administrar los usuarios */}
+      {/** Rutas para administrar los usuarios */}
       {user.rol ? (
-        <Route
-          path="/users"
-          element={
-            <UserContextProvider>
-              <Users />
-            </UserContextProvider>
-          }
-        />
+        <>
+          <Route
+            path="/users"
+            element={
+              <UserContextProvider>
+                <Users />
+              </UserContextProvider>
+            }
+          />
+
+          <Route
+            path="/user/:idUser"
+            element={
+              <UserContextProvider>
+                <UserPage edit={false} />
+              </UserContextProvider>
+            }
+          />
+
+          <Route
+            path="/user/:idUser/edit"
+            element={
+              <UserContextProvider>
+                <UserPage edit={true} />
+              </UserContextProvider>
+            }
+          />
+        </>
       ) : null}
 
       {/** Ruta para mostrar y/o administrar las mascotas (Según el rol el componente renderizará distintas opciones) */}

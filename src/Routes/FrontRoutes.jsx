@@ -21,7 +21,7 @@ function FrontRoutes() {
       <Route index element={<Home />} />
       <Route path="/services" element={<Services />} />
       <Route path="/contact" element={<Contact />} />
-      {/** Renderizado condicional para Dashboard, sólo los usuarios podrán acceder */}
+      {/** Renderizado condicional para Dashboard, sólo los usuarios autenticados podrán acceder */}
       <Route path="/dashboard/*" element={user.id ? <Dashboard /> : <Navigate replace to="/" />} />
       <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
