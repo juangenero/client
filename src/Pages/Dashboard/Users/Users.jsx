@@ -1,9 +1,10 @@
 import React, { useEffect, useContext } from "react";
-import { getAllUsers, resetUsers, reloadUsers } from "../../Services/users.service.js";
-import { Eye, Pencil, Trash } from "../../Components/Utils/Icons.jsx";
-import DeleteUserModal from "../../Components/Modals/DeleteUserModal.jsx";
-import { UserContext } from "../../Context/UserContext";
-import { AppContext } from "../../Context/AppContext";
+import { getAllUsers, resetUsers, reloadUsers } from "../../../Services/users.service.js";
+import { Eye, Pencil, Trash } from "../../../Components/Utils/Icons.jsx";
+import DeleteUserModal from "../../../Components/Modals/DeleteUserModal.jsx";
+import NewUserModal from "../../../Components/Modals/NewUserModal";
+import { UserContext } from "../../../Context/UserContext";
+import { AppContext } from "../../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 // Bootstrap
@@ -17,7 +18,7 @@ export default function Users() {
 
   const { user } = useContext(AppContext);
 
-  const { setUserPageIsLoading, setUserPageError, setUserPageData } = useContext(UserContext);
+  const { setNewUserModalShow } = useContext(UserContext);
 
   const {
     userDeleteModalShow, // Boolean que indica que se muestra la ventana modal de eliminar usuario
@@ -93,7 +94,7 @@ export default function Users() {
       <div className="mb-2">
         <Button
           onClick={() => {
-            alert("Creando usuario..");
+            setNewUserModalShow(true);
           }}
         >
           Nuevo usuario
@@ -128,7 +129,7 @@ export default function Users() {
             ) => (
               <tr key={userData.idUsuario}>
                 <td>{userData.idUsuario}</td>
-                <td>{user.nombre}</td>
+                <td>{userData.nombre}</td>
                 <td>{userData.apellidos}</td>
                 <td>{userData.email}</td>
                 <td>{userData.fechaAlta}</td>
@@ -137,20 +138,15 @@ export default function Users() {
                   {
                     <Eye
                       action={() => {
-                        setUserPageIsLoading(true); // Indico que UserPage está cargando para que llame a la API
-                        setUserPageError(false); // Elimino los errores que hubiera anteriormente
-                        setUserPageData(null); // Elimino los datos que hubiera anteriormente
+                        setManageUser(userData); // Guardar usuario seleccionado en el estado.
                         navigate("/dashboard/user/" + userData.idUsuario); // Redirige a la página de edición usuario.
                       }}
-                      disabled={false}
                     />
                   }
                   {
                     <Pencil
                       action={() => {
-                        setUserPageIsLoading(true); // Indico que UserPage está cargando para que llame a la API
-                        setUserPageError(false); // Elimino los errores que hubiera anteriormente
-                        setUserPageData(null); // Elimino los datos que hubiera anteriormente
+                        setManageUser(userData); // Guardar usuario seleccionado en el estado.
                         navigate("/dashboard/user/" + userData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
                       }}
                     />
@@ -177,6 +173,7 @@ export default function Users() {
 
       {/** Ventanas modales (Se inician en oculto) */}
       <DeleteUserModal />
+      <NewUserModal />
     </>
   );
 }

@@ -2,9 +2,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Contenido de las rutas
-import Users from "../Pages/Dashboard/Users";
+import Users from "../Pages/Dashboard/Users/Users";
 import Pets from "../Pages/Dashboard/Pets";
-import UserPage from "../Pages/Dashboard/UserPage";
+import UserView from "../Pages/Dashboard/Users/UserView";
+import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
 import { useContext } from "react";
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
@@ -46,7 +47,7 @@ function DashboardRoutes() {
             path="/user/:idUser"
             element={
               <UserContextProvider>
-                <UserPage edit={false} />
+                <UserView />
               </UserContextProvider>
             }
           />
@@ -55,7 +56,7 @@ function DashboardRoutes() {
             path="/user/:idUser/edit"
             element={
               <UserContextProvider>
-                <UserPage edit={true} />
+                <UserEdit />
               </UserContextProvider>
             }
           />
