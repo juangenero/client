@@ -104,7 +104,7 @@ export default function LoginModal(props) {
     </Modal>
   );
 
-  // Funcionalidad del botón de "Aceptar" cuando se hace login
+  // Botón aceptar
   function handleSubmit(event) {
     event.preventDefault();
     setIsLoading(true);

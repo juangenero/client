@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Contenido de las rutas
-import Users from "../Pages/Dashboard/Users/Users";
+import UsersList from "../Pages/Dashboard/Users/UsersList";
 import Pets from "../Pages/Dashboard/Pets";
 import UserView from "../Pages/Dashboard/Users/UserView";
 import UserEdit from "../Pages/Dashboard/Users/UserEdit";
@@ -38,7 +38,7 @@ function DashboardRoutes() {
             path="/users"
             element={
               <UserContextProvider>
-                <Users />
+                <UsersList />
               </UserContextProvider>
             }
           />

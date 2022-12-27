@@ -11,8 +11,8 @@ import {
 } from "react-bootstrap";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { newUser } from "../../Services/users.service.js";
-import { UserContext } from "../../Context/UserContext"; // Contexto de los usuarios
+import { newUser } from "../../../Services/users.service.js";
+import { UserContext } from "../../../Context/UserContext"; // Contexto de los usuarios
 
 export default function LoginModal(props) {
   const navigate = useNavigate(); // Método para redirigir a otra ruta

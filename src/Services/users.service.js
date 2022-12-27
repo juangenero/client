@@ -5,11 +5,11 @@ export async function getAllUsers() {
 }
 
 export async function getUser(id) {
-  return await clientAxios.get("/user/" + id);
+  return await clientAxios.get("/users/" + id);
 }
 
-export async function editUser(id, user) {
-  return await clientAxios.patch("/editUser/"+ id, user);
+export async function editUser(user) {
+  return await clientAxios.patch("/users/", user);
 }
 
 export async function newUser() {
@@ -17,15 +17,9 @@ export async function newUser() {
 }
 
 export async function deleteUser(id) {
-  await clientAxios.delete("/deleteUser/"+ id);
+  await clientAxios.delete("/users/"+ id);
 }
 
 export async function resetUsers() {
-  await clientAxios.post("/resetUsers");
-}
-
-// Función que elimina el mensaje de error y establece el estado cargando (implica llamar a la API)
-export function reloadUsers(setError, setIsLoading) {
-  setError(null);
-  setIsLoading(true);
+  await clientAxios.post("/users/reset");
 }
