@@ -19,44 +19,36 @@ export default function UsersList() {
 
   const { user } = useContext(AppContext);
 
-  const { setNewUserModalShow } = useContext(UserContext);
-
   const {
-    userListDeleteModalShow, // Boolean que indica que se muestra la ventana modal de eliminar usuario
-    setUserListDeleteModalShow,
-    setDeleteWarningModalShow,
-    selectedUser, // Datos del usuario que se está gestionando (cuando se realizan acciones sobre el)
-    setSelectedUser,
-    userListIsLoading, // Boolean que indica si los usuarios han sido obtenidos desde la API
-    setUserListIsLoading,
-    userListData, // Datos de los usuarios obtenidos de la API
-    setUserListData,
-    userListError, // Errores obtenidos al solicitar los datos del usuario de la API
-    setUserListError,
+    setNewUserModalShow, // Mostrar modal registro usuarios
+    setDeleteWarningModalShow, // Mostrar DeleteUserWarningModal
+    setUserDeleteModalShow, // Mostrar DeleteUserModal
+    setSelectedUser, // Pasar datos a deleteUserModal
 
-    // Para restablecer estados de userEdit en el botón de editar..
-    setUserEditShowInfoIsLoading,
-    setUserEditShowInfoData,
-    setUserEditShowInfoError,
+    userListIsLoading, // Cargando
+    setUserListIsLoading,
+    userListData, // Datos
+    setUserListData,
+    userListError, // Errores
+    setUserListError,
   } = useContext(UserContext);
 
   useEffect(() => {
     if (userListIsLoading) {
-      // Llamada al método asíncrono
       getAllUsers()
         .then((res) => {
           // Si la petición se ha ejecutado correctamente
           if (res.status === 200) {
-            setUserListData(res.data); // Guardar datos en el estado
-            setUserListIsLoading(false); // Cambiar el estado, puesto que ya tenemos los datos
+            setUserListData(res.data); // Guardar datos
           } else {
-            setUserListError("Hubo un error al mostrar los usuarios."); // Almacenar error
-            setUserListIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
+            setUserListError("Hubo un error al mostrar los usuarios."); // Guardar error
           }
+
+          setUserListIsLoading(false); // Cambiar estado, ya tenemos los datos o el error
         })
         .catch(() => {
-          setUserListError("Hubo un error al realizar la solicitud."); // Almacenar error
-          setUserListIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
+          setUserListError("Hubo un error al realizar la solicitud."); // Guardar error
+          setUserListIsLoading(false); // Cambiar estado, ocurrió un error
         });
     }
   }, [userListIsLoading]);
@@ -67,8 +59,7 @@ export default function UsersList() {
       <Error
         error={userListError}
         actions={() => {
-          setUserListError(null);
-          setUserListIsLoading(true);
+          navigate("/dashboard/users");
         }}
       />
     );
@@ -95,7 +86,6 @@ export default function UsersList() {
           className="mx-1"
           onClick={async () => {
             await resetUsers();
-            setUserListError(null);
             setUserListIsLoading(true);
           }}
         >
@@ -130,30 +120,34 @@ export default function UsersList() {
                   {
                     <Eye
                       action={() => {
-                        setSelectedUser(userListData); // Guardar usuario seleccionado en el estado.
-                        navigate("/dashboard/user/" + userListData.idUsuario); // Redirige a la página de edición usuario.
+                        navigate("/dashboard/users/" + userListData.idUsuario); // Redirige a la página de edición usuario.
                       }}
                     />
                   }
                   {
                     <Pencil
                       action={() => {
-                        setUserEditShowInfoIsLoading(true);
-                        setUserEditShowInfoData(null);
-                        setUserEditShowInfoError(null);
-                        navigate("/dashboard/user/" + userListData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
+                        navigate("/dashboard/users/" + userListData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
                       }}
                     />
                   }
                   {
-                    // El usuario logueado no puede eliminar su propio usuario
+                    // Mostrar un icono u otro dependiendo de si se trata del usuario autenticado
                     user.id == userListData.idUsuario ? (
-                      <Trash disabled={true} action={()=>{setDeleteWarningModalShow(true)}} /> 
+                      <Trash
+                        disabled={true}
+                        action={() => {
+                          setDeleteWarningModalShow(true);
+                        }}
+                      />
                     ) : (
                       <Trash
                         action={() => {
-                          setSelectedUser({ id: userListData.idUsuario, email: userListData.email });
-                          setUserListDeleteModalShow(true);
+                          setSelectedUser({
+                            id: userListData.idUsuario,
+                            email: userListData.email,
+                          });
+                          setUserDeleteModalShow(true);
                         }}
                       />
                     )
@@ -166,9 +160,9 @@ export default function UsersList() {
       </Table>
 
       {/** Ventanas modales (Se inician en oculto) */}
+      <NewUserModal />
       <DeleteUserModal />
       <DeleteUserWarningModal />
-      <NewUserModal />
     </>
   );
 }

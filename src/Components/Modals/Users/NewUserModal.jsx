@@ -1,41 +1,70 @@
-import {
-  Modal,
-  Form,
-  FloatingLabel,
-  Button,
-  Spinner,
-  Alert,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
-import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Modal, Form, Button, Spinner, Alert, Container, Row, Col } from "react-bootstrap";
+import { useEffect, useContext, useState } from "react";
 import { newUser } from "../../../Services/users.service.js";
 import { UserContext } from "../../../Context/UserContext"; // Contexto de los usuarios
+import md5 from "md5";
+import imgToBase64 from "../../../Utils/imgToBase64.js";
+import dateFormat from "../../../Utils/dateFormat.js";
 
-export default function LoginModal(props) {
-  const navigate = useNavigate(); // Método para redirigir a otra ruta
+export default function LoginModal() {
+  const [img, setImg] = useState(null); // Estado local para almacenar la imagen en base64
+  const [message, setMessage] = useState(null); // Mensaje de usuario insertado
 
   const {
-    newUserModalShow,
+    setUserListIsLoading,
+    newUserModalShow, // Modal
     setNewUserModalShow,
-    newUserIsLoading,
+    newUserIsLoading, // Carga
     setNewUserIsLoading,
-    newUserError,
+    newUserData, // Datos
+    setNewUserData,
+    newUserError, // Mensaje de error
     setNewUserError,
   } = useContext(UserContext);
 
   useEffect(() => {
     if (newUserIsLoading) {
-      newUser();
+      newUser(newUserData)
+        .then((res) => {
+          console.log(res);
+          // Si no se ha editado el registro..
+          if (!(res.data.affectedRows && res.data.affectedRows > 0)) {
+            // Si la API ha devuelto errores, comprueba cual es
+            if (res.data.error) {
+              if (res.data.error.email && res.data.error.email === "duplicate")
+                setNewUserError("El email introducido ya existe \nen la base de datos.");
+
+              if (res.data.error.dni && res.data.error.dni === "duplicate")
+                setNewUserError("El dni introducido ya existe en la base de datos.");
+
+              if (res.data.error.telephone && res.data.error.telephone === "duplicate")
+                setNewUserError("El teléfono introducido ya existe en la base de datos.");
+
+              // Si no se ha insertado el registro y existe un error no controlado.
+            } else {
+              setNewUserError("Ocurrió un error interno en el servidor (500)");
+            }
+
+            // Si el usuario se ha insertado..
+          } else {
+            setMessage("Usuario registrado correctamente.");
+          }
+
+          setNewUserIsLoading(false);
+        })
+        .catch((err) => {
+          setNewUserError("Hubo un error al realizar la solicitud."); // Almacenar error
+          setNewUserIsLoading(false);
+        });
     }
   }, [newUserIsLoading]);
 
   // Efecto para resetear el formulario cuando se oculta
   useEffect(() => {
     if (!newUserModalShow) {
+      setMessage(null);
       setNewUserError(null);
+      setNewUserData(null);
       setNewUserIsLoading(false);
     }
   }, [newUserModalShow]);
@@ -52,71 +81,133 @@ export default function LoginModal(props) {
         <h4 className="mb-0">Nuevo usuario</h4>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={(event) => handleSubmit(event)}>
+        <Form onSubmit={(event) => handleSubmit(event)} id="newUserForm">
           <Container>
+            {/** Errores de la API (Usuario insertado) */}
+            {newUserError ? (
+              <Alert variant="danger" className="w-75">
+                <h6 className="mb-0">{newUserError}</h6>
+              </Alert>
+            ) : null}
+            {message ? (
+              <Alert variant="success" className="w-50">
+                <h6 className="mb-0">{message}</h6>
+              </Alert>
+            ) : null}
+            {/** Errores de la API (Usuario insertado) */}
+            <p>Los campos marcados con (*) son obligatorios.</p>
             <Row>
               <Col>
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Label>Contraseña *</Form.Label>
+                  <Form.Control
+                    type="password"
+                    pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{6,24}$"
+                    title="Minúsculas, mayúsculas, números y entre 6 y 24 carácteres"
+                    required
+                    defaultValue="Juan123"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="name">
+                  <Form.Label>Nombre *</Form.Label>
+                  <Form.Control type="text" maxLength={25} required defaultValue="Juan" />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="lastName">
+                  <Form.Label>Apellidos *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    maxLength={50}
+                    required
+                    defaultValue="Genero Espinosa"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="dni">
+                  <Form.Label>Dni *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    minLength={9}
+                    maxLength={9}
+                    required
+                    defaultValue="97531264H"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="telephone">
+                  <Form.Label>Teléfono *</Form.Label>
+                  <Form.Control
+                    type="tel"
+                    minLength={9}
+                    maxLength={9}
+                    required
+                    defaultValue="616161617"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
                 <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Label>Email *</Form.Label>
+                  <Form.Control
+                    type="email"
+                    maxLength={80}
+                    required
+                    defaultValue="admin@juan.com"
+                  />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="nombre">
-                  <Form.Label>Nombre</Form.Label>
-                  <Form.Control type="text" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="telefono">
-                  <Form.Label>Teléfono</Form.Label>
-                  <Form.Control type="tel" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="localidad">
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="location">
                   <Form.Label>Localidad</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" maxLength={50} />
                 </Form.Group>
-
-                <Form.Group className="mb-3" controlId="cPostal">
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="province">
+                  <Form.Label>Provincia</Form.Label>
+                  <Form.Control type="text" maxLength={50} />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="postalCode">
                   <Form.Label>Código postal</Form.Label>
-                  <Form.Control type="number" />
+                  <Form.Control type="number" maxLength={5} />
                 </Form.Group>
-
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="dateOfBirth">
+                  <Form.Label>Fecha nacimiento</Form.Label>
+                  <Form.Control type="date" />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
                 <Form.Group className="mb-3" controlId="rol">
                   <Form.Label>Tipo de usuario</Form.Label>
                   <Form.Select>
-                    <option value={0} defaultChecked>Cliente</option>
+                    <option value={0}>Cliente</option>
                     <option value={1}>Veterinario</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group className="mb-3" controlId="contraseña">
-                  <Form.Label>Contraseña</Form.Label>
-                  <Form.Control type="password" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="apellidos">
-                  <Form.Label>Apellidos</Form.Label>
-                  <Form.Control type="text" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="dni">
-                  <Form.Label>Dni</Form.Label>
-                  <Form.Control type="text" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="fechaNacimiento">
-                  <Form.Label>Fecha nacimiento</Form.Label>
-                  <Form.Control type="date" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="provincia">
-                  <Form.Label>Provincia</Form.Label>
-                  <Form.Control type="text" />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="imagen">
-                  <Form.Label>Imagen del perfil</Form.Label>
-                  <Form.Control type="file" />
+                <Form.Group className="mb-3" controlId="image">
+                  <Form.Label>Imagen del perfil (2 MB máximo)</Form.Label>
+                  <Form.Control type="file" accept=".png, .jpg" onChange={handleImg} />
                 </Form.Group>
               </Col>
             </Row>
@@ -136,7 +227,13 @@ export default function LoginModal(props) {
               Aceptar
             </Button>
           )}
-          <Button onClick={() => setNewUserModalShow(false)} variant="danger" className="me-2">
+          <Button
+            onClick={() => {
+              setNewUserModalShow(false);
+            }}
+            variant="danger"
+            className="me-2"
+          >
             Cancelar
           </Button>
         </Form>
@@ -147,6 +244,40 @@ export default function LoginModal(props) {
   // Funcionalidad del botón de "Aceptar" cuando se hace login
   function handleSubmit(event) {
     event.preventDefault();
+
+    // Usuario resultado del formulario
+    setNewUserData({
+      password: md5(event.target.password.value),
+      name: event.target.name.value,
+      lastName: event.target.lastName.value,
+      dni: event.target.dni.value,
+      telephone: event.target.telephone.value,
+      email: event.target.email.value,
+      location: event.target.location.value.length ? event.target.location.value : null,
+      province: event.target.province.value.length ? event.target.province.value : null,
+      postalCode: event.target.postalCode.value.length ? event.target.postalCode.value : null,
+      registerDate: dateFormat(new Date()), // Parseo la fecha a formato YYYY-MM-DD, para la BD
+      dateOfBirth: event.target.dateOfBirth.value.length ? event.target.dateOfBirth.value : null, // Si esta vacío, lo pasa a null
+      rol: event.target.rol.value,
+      image: img,
+    });
+
     setNewUserIsLoading(true);
+  }
+
+  // Imagen de perfil
+  function handleImg(event) {
+    console.log(event.target);
+    const file = event.target.files[0];
+    const maxSize = 2000000; // 2 MB
+
+    // Si no supera el tamaño máximo, serializa la imagen
+    if (file.size < maxSize) {
+      imgToBase64(file, (res) => {
+        setImg(res);
+      });
+    } else {
+      event.target.value = "";
+    }
   }
 }

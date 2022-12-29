@@ -9,7 +9,7 @@ function DeleteUserWarningModal() {
   return (
     <Modal show={deleteWarningModalShow} onHide={() => setDeleteWarningModalShow(false)}>
       <Modal.Header>
-        <Modal.Title>Acción no permitida</Modal.Title>
+        <Modal.Title>⚠ Acción no permitida</Modal.Title>
       </Modal.Header>
       <Modal.Body>No puedes eliminar tu propio usuario.</Modal.Body>
       <Modal.Footer>

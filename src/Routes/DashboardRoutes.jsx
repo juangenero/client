@@ -1,5 +1,7 @@
+import { useEffect, useContext } from "react";
+
 // Componentes para las rutas
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 // Contenido de las rutas
 import UsersList from "../Pages/Dashboard/Users/UsersList";
@@ -7,9 +9,8 @@ import Pets from "../Pages/Dashboard/Pets";
 import UserView from "../Pages/Dashboard/Users/UserView";
 import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
-import { useContext } from "react";
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
-import { UserContextProvider } from "../Context/UserContext"; // Contexto del usuario
+import { UserContext, UserContextProvider } from "../Context/UserContext"; // Contexto del usuario
 
 {
   /**
@@ -19,12 +20,61 @@ import { UserContextProvider } from "../Context/UserContext"; // Contexto del us
    * para visualizarlo.
    *
    * Las rutas "pets" y "consults" son comunes a los 2 roles, renderizan el mismo componente, aunque
-   * dependiendo del rol, tendrán una funcionalidad distinta.
+   * dependiendo del rol, tendrá una funcionalidad distinta.
    */
 }
 
 function DashboardRoutes() {
+  const location = useLocation(); // Hook de react-router-dom
+
+  // Contextos
   const { user } = useContext(AppContext);
+  const {
+    // Listado
+    setUserListIsLoading,
+    setUserListData,
+    setUserListError,
+    // Perfil
+    setUserViewIsLoading,
+    setUserViewData,
+    setUserViewError,
+    // Edición
+    setUserEditShowInfoIsLoading,
+    setUserEditShowInfoData,
+    setUserEditShowInfoError,
+    setUserEditSubmitInfoIsLoading,
+    setUserEditSubmitInfoData,
+    setUserEditSubmitInfoMessage,
+    setUserEditSubmitInfoError,
+  } = useContext(UserContext);
+
+  // Limpiar estados de todo del dashboard cuando se cambia de ruta (Los estados de los modals se eliminan al ocultarse)
+  useEffect(() => {
+    const currentRoute = location.pathname; // Ruta actual
+
+    // Listado de usuarios
+    if (currentRoute === "/dashboard/users") {
+      setUserListIsLoading(true);
+      setUserListData(null);
+      setUserListError(null);
+
+      // Perfil de usuario
+    } else if (currentRoute.match("/dashboard/users/[0-9]{1,9}$")) {
+      setUserViewIsLoading(true);
+      setUserViewData(null);
+      setUserViewError(null);
+
+      // Edición de usuarios
+    } else if (currentRoute.match("/dashboard/users/[0-9]{1,9}/edit$")) {
+      setUserEditShowInfoIsLoading(true);
+      setUserEditShowInfoData(null);
+      setUserEditShowInfoError(null);
+      setUserEditSubmitInfoIsLoading(false);
+      setUserEditSubmitInfoData(null);
+      setUserEditSubmitInfoMessage(null);
+      setUserEditSubmitInfoError(null);
+    }
+  }, [location]);
 
   return (
     <Routes>
@@ -34,32 +84,11 @@ function DashboardRoutes() {
       {/** Rutas para administrar los usuarios */}
       {user.rol ? (
         <>
-          <Route
-            path="/users"
-            element={
-              <UserContextProvider>
-                <UsersList />
-              </UserContextProvider>
-            }
-          />
+          <Route path="/users" element={<UsersList />} />
 
-          <Route
-            path="/user/:idUser"
-            element={
-              <UserContextProvider>
-                <UserView />
-              </UserContextProvider>
-            }
-          />
+          <Route path="/users/:idUser" element={<UserView />} />
 
-          <Route
-            path="/user/:idUser/edit"
-            element={
-              <UserContextProvider>
-                <UserEdit />
-              </UserContextProvider>
-            }
-          />
+          <Route path="/users/:idUser/edit" element={<UserEdit />} />
         </>
       ) : null}
 

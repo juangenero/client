@@ -25,14 +25,14 @@ function UserPage() {
     if (userViewIsLoading) {
       getUser(idUser)
         .then((res) => {
-          // Si la petición se ha ejecutado correctamente
+          // Si la petición se ha ejecutado correctamente.
           if (res.status === 200) {
-            setUserViewData(res.data); // Guardar datos en el estado
+            setUserViewData(res.data); // Guardar datos.
             if (res.data.error) {
-              setUserViewError(res.data.error); // Almacenar error enviado por la API.
+              setUserViewError(res.data.error); // Guardar error.
             }
           } else {
-            setUserViewError("Hubo un error al mostrar los datos del usuario."); // Almacenar error
+            setUserViewError("Hubo un error al mostrar los datos del usuario."); // Guardar error.
           }
 
           setUserViewIsLoading(false); // Cambiar el estado, ya tenemos los datos o el mensaje de error.
@@ -55,8 +55,7 @@ function UserPage() {
       <Error
         error={userViewError}
         actions={() => {
-          setUserViewError(null);
-          setUserViewIsLoading(true);
+          navigate("/dashboard/users/" + idUser);
         }}
       />
     );
@@ -68,8 +67,9 @@ function UserPage() {
       <Stack direction="horizontal" gap="4">
         <Image
           className="border"
-          width="250px"
-          src={"https://xsgames.co/randomusers/avatar.php?g=female"}
+          width="200px"
+          height="200px"
+          src={userViewData.rutaImagen}
           roundedCircle
         />
 
@@ -122,7 +122,7 @@ function UserPage() {
       </Stack>
       <Button
         onClick={() => {
-          navigate("/dashboard/user/" + idUser + "/edit");
+          navigate("/dashboard/users/" + idUser + "/edit");
         }}
       >
         Editar

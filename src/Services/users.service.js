@@ -12,12 +12,12 @@ export async function editUser(user) {
   return await clientAxios.patch("/users/", user);
 }
 
-export async function newUser() {
-  alert("Creando nuevo usuario..")
+export async function deleteUser(id) {
+  return await clientAxios.delete("/users/" + id);
 }
 
-export async function deleteUser(id) {
-  await clientAxios.delete("/users/"+ id);
+export async function newUser(user) {
+  return await clientAxios.post("/users/", user);
 }
 
 export async function resetUsers() {

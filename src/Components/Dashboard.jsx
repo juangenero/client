@@ -4,6 +4,8 @@ import { Stack } from "react-bootstrap";
 // Navegación del Dashboard
 import DashboardNav from "./Dashboard/DashboardNav";
 import DashboardRoutes from "../Routes/DashboardRoutes";
+import { UserContextProvider } from "../Context/UserContext";
+import { VaccineContextProvider } from "../Context/VaccineContext";
 
 // Estructura común a todas las páginas del Dashboard.
 export function Dashboard() {
@@ -13,7 +15,11 @@ export function Dashboard() {
         <DashboardNav />
       </div>
       <div className="bg-light rounded p-2">
-        <DashboardRoutes />
+        <UserContextProvider>
+          <VaccineContextProvider>
+            <DashboardRoutes />
+          </VaccineContextProvider>
+        </UserContextProvider>
       </div>
     </Stack>
   );

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
+import { Alert, Spinner, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../../../Context/UserContext";
@@ -7,17 +8,49 @@ import { deleteUser } from "../../../Services/users.service.js";
 
 export default function DeleteUserModal() {
   const {
-    userListDeleteModalShow,
-    setUserListDeleteModalShow,
-    selectedUser,
-    setUserListIsLoading,
-    setUserListError,
+    userDeleteModalShow, // Modal
+    setUserDeleteModalShow,
+    userDeleteIsLoading, // Cargar
+    setUserDeleteIsLoading,
+    userDeleteError, // Mensaje de error
+    setUserDeleteError,
+    selectedUser, // Datos pasados desde UserList
+    setUserListIsLoading, // Para actualizar la lista de usuarios
   } = useContext(UserContext);
+
+  useEffect(() => {
+    if (userDeleteIsLoading) {
+      deleteUser(selectedUser.id)
+        .then((res) => {
+          // Si se ha eliminado el usuario
+          if (res.data.affectedRows > 0) {
+            setUserListIsLoading(true); // Pone a cargar la lista de usuarios
+            setUserDeleteModalShow(false); // Oculta la ventana de confirmar eliminación
+          } else if (res.data.error) {
+            setUserDeleteError(res.data.error);
+          }
+
+          setUserDeleteIsLoading(false);
+        })
+        .catch((err) => {
+          setUserDeleteError("Hubo un error al realizar la solicitud."); // Almacenar error
+          setUserDeleteIsLoading(false);
+        });
+    }
+  }, [userDeleteIsLoading]);
+
+  // Limpiar estados al cerrar el modal
+  useEffect(() => {
+    if (!userDeleteModalShow) {
+      setUserListIsLoading(false);
+      setUserDeleteError(null);
+    }
+  });
 
   return (
     <Modal
-      show={userListDeleteModalShow}
-      onHide={() => setUserListDeleteModalShow(false)}
+      show={userDeleteModalShow}
+      onHide={() => setUserDeleteModalShow(false)}
       backdrop="static"
       keyboard={false}
     >
@@ -30,20 +63,31 @@ export default function DeleteUserModal() {
         forma permanente?
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          variant="success"
-          onClick={async () => {
-            await deleteUser(selectedUser.id); // Elimina al usuario
-            setUserListDeleteModalShow(false); // Oculta la ventana de confirmar eliminación
-            setUserListError(null); // Borra los errores de la lista de usuarios
-            setUserListIsLoading(true); // Pone a cargar la lista de usuarios
-          }}
-        >
-          Aceptar
-        </Button>
-        <Button variant="danger" onClick={() => setUserListDeleteModalShow(false)}>
-          Cancelar
-        </Button>
+        <Stack gap="2">
+          {userDeleteError ? (
+            <Alert className="mb-0" variant="danger">
+              {userDeleteError}
+            </Alert>
+          ) : null}
+          {userDeleteIsLoading ? (
+            <Button variant="success" disabled>
+              <Spinner animation="grow" size="sm" />
+              Aceptar
+            </Button>
+          ) : (
+            <Button
+              variant="success"
+              onClick={async () => {
+                setUserDeleteIsLoading(true); // Llamar a la API
+              }}
+            >
+              Aceptar
+            </Button>
+          )}
+          <Button variant="danger" onClick={() => setUserDeleteModalShow(false)}>
+            Cancelar
+          </Button>
+        </Stack>
       </Modal.Footer>
     </Modal>
   );
