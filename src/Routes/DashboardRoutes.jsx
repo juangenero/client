@@ -5,12 +5,12 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 // Contenido de las rutas
 import UsersList from "../Pages/Dashboard/Users/UsersList";
-import Pets from "../Pages/Dashboard/Pets";
+import Pets from "../Pages/Dashboard/Pets/Pets";
 import UserView from "../Pages/Dashboard/Users/UserView";
 import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
-import { UserContext, UserContextProvider } from "../Context/UserContext"; // Contexto del usuario
+import { UserContext } from "../Context/UserContext"; // Contexto del usuario
 
 {
   /**
@@ -29,16 +29,17 @@ function DashboardRoutes() {
 
   // Contextos
   const { user } = useContext(AppContext);
+
   const {
-    // Listado
+    // Listado usuarios
     setUserListIsLoading,
     setUserListData,
     setUserListError,
-    // Perfil
+    // Perfil usuarios
     setUserViewIsLoading,
     setUserViewData,
     setUserViewError,
-    // Edición
+    // Edición usuarios
     setUserEditShowInfoIsLoading,
     setUserEditShowInfoData,
     setUserEditShowInfoError,
@@ -59,13 +60,19 @@ function DashboardRoutes() {
       setUserListError(null);
 
       // Perfil de usuario
-    } else if (currentRoute.match("/dashboard/users/[0-9]{1,9}$")) {
+    } else if (
+      currentRoute.match("/dashboard/users/[0-9]{1,9}$") ||
+      currentRoute === "/dashboard/profile"
+    ) {
       setUserViewIsLoading(true);
       setUserViewData(null);
       setUserViewError(null);
 
       // Edición de usuarios
-    } else if (currentRoute.match("/dashboard/users/[0-9]{1,9}/edit$")) {
+    } else if (
+      currentRoute.match("/dashboard/users/[0-9]{1,9}/edit$") ||
+      currentRoute === "/dashboard/profile/edit"
+    ) {
       setUserEditShowInfoIsLoading(true);
       setUserEditShowInfoData(null);
       setUserEditShowInfoError(null);
@@ -79,16 +86,19 @@ function DashboardRoutes() {
   return (
     <Routes>
       {/** Ruta para mostrar y editar perfil */}
-      {user.rol ? null : <Route path="/profile" element={<h1>Perfil</h1>} />}
+      {user.rol ? null : <Route path="/profile" element={<UserView renderingMode="client" />} />}
+      {user.rol ? null : (
+        <Route path="/profile/edit" element={<UserEdit renderingMode="client" />} />
+      )}
 
       {/** Rutas para administrar los usuarios */}
       {user.rol ? (
         <>
           <Route path="/users" element={<UsersList />} />
 
-          <Route path="/users/:idUser" element={<UserView />} />
+          <Route path="/users/:idUser" element={<UserView renderingMode="vet" />} />
 
-          <Route path="/users/:idUser/edit" element={<UserEdit />} />
+          <Route path="/users/:idUser/edit" element={<UserEdit renderingMode="vet" />} />
         </>
       ) : null}
 

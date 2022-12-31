@@ -1,3 +1,4 @@
+import { AppContext } from "../../../Context/AppContext";
 import { UserContext } from "../../../Context/UserContext";
 
 import React, { useEffect, useContext, useState } from "react";
@@ -9,10 +10,15 @@ import Error from "../../../Components/Utils/Error";
 import md5 from "md5";
 import imgToBase64 from "../../../Utils/imgToBase64";
 
-function UserEdit() {
+function UserEdit({ renderingMode = "client" }) {
   const navigate = useNavigate();
-  const { idUser } = useParams(); // ID del usuario en la URL
   const [img, setImg] = useState(null); // Imagen de usuario
+  const { user } = useContext(AppContext);
+
+  // Por defecto, idUser es sacado de la URL
+  let idUser = useParams().idUser;
+  // Pero si el componente se está renderizando para un cliente, entonces idUser es el del usuario autenticado.
+  if (renderingMode === "client") idUser = user.id;
 
   const {
     // Estados para cargar el usuario en el formulario
@@ -72,18 +78,37 @@ function UserEdit() {
           } else {
             // Si la API ha devuelto errores..
             if (res.data.error) {
-              if (res.data.error.email && res.data.error.email === "duplicate")
+              const email = res.data.error.email;
+              const dni = res.data.error.dni;
+              const telephone = res.data.error.telephone;
+
+              if (email && dni && telephone) {
                 setUserEditSubmitInfoError(
-                  "El email introducido ya existe en la base de datos."
+                  "El email, dni y teléfono introducidos ya existen en la base de datos."
                 );
-              if (res.data.error.dni && res.data.error.dni === "duplicate")
+              } else if (email && dni) {
                 setUserEditSubmitInfoError(
-                  "El dni introducido ya existe en la base de datos."
+                  "El email y dni introducidos ya existen en la base de datos."
                 );
-              if (res.data.error.telephone && res.data.error.telephone === "duplicate")
+              } else if (email && telephone) {
+                setUserEditSubmitInfoError(
+                  "El email y teléfono introducidos ya existen en la base de datos."
+                );
+              } else if (email) {
+                setUserEditSubmitInfoError("El email introducido ya existe en la base de datos.");
+              } else if (dni && telephone) {
+                setUserEditSubmitInfoError(
+                  "El dni y teléfono introducidos ya existen en la base de datos."
+                );
+              } else if (dni) {
+                setUserEditSubmitInfoError("El dni introducido ya existe en la base de datos.");
+              } else if (telephone) {
                 setUserEditSubmitInfoError(
                   "El teléfono introducido ya existe en la base de datos."
                 );
+              } else {
+                setUserEditSubmitInfoError("Email, dni o teléfono ya existentes!");
+              }
             }
           }
           setUserEditSubmitInfoIsLoading(false);
@@ -106,7 +131,11 @@ function UserEdit() {
       <Error
         error={userEditShowInfoError}
         actions={() => {
-          navigate("/dashboard/users/" + idUser + "/edit");
+          if (renderingMode === "vet") {
+            navigate("/dashboard/users/" + idUser + "/edit");
+          } else if (renderingMode === "client") {
+            navigate("/dashboard/profile/edit");
+          }
         }}
       />
     );
@@ -263,28 +292,45 @@ function UserEdit() {
             </Form.Group>
           </Col>
         </Row>
+        <div className="d-flex">
+          {/** Botón editar */}
+          {userEditSubmitInfoIsLoading ? (
+            <Button variant="success" className="mx-1 mt-2" disabled>
+              <Spinner animation="grow" size="sm" />
+              Editar
+            </Button>
+          ) : (
+            <Button type="submit" variant="success" className="mx-1 mt-2">
+              Editar
+            </Button>
+          )}
 
-        {/** Botón editar */}
-        {userEditSubmitInfoIsLoading ? (
-          <Button variant="success" className="mt-2" disabled>
-            <Spinner animation="grow" size="sm" />
-            Editar
+          <Button
+            variant="danger"
+            className="mx-1 mt-2"
+            onClick={() => {
+              if (renderingMode === "vet") {
+                navigate("/dashboard/users");
+              } else if (renderingMode === "client") {
+                navigate("/dashboard/profile");
+              }
+            }}
+          >
+            Cancelar
           </Button>
-        ) : (
-          <Button type="submit" variant="success" className="mt-2">
-            Editar
-          </Button>
-        )}
 
-        <Button
-          variant="danger"
-          className="mx-2 mt-2"
-          onClick={() => {
-            navigate("/dashboard/users");
-          }}
-        >
-          Cancelar
-        </Button>
+          {/** Este botón sólo está disponible para los veterinarios, ya que para los clientes, el botón de "Cancelar" realiza su función */}
+          {renderingMode === "vet" ? (
+            <Button
+              className="mx-1 mt-2 ms-auto"
+              onClick={() => {
+                navigate("/dashboard/users/" + idUser);
+              }}
+            >
+              Ver perfil
+            </Button>
+          ) : null}
+        </div>
       </Container>
     </Form>
   );
@@ -302,10 +348,11 @@ function UserEdit() {
       dni: event.target.dni.value,
       telephone: event.target.telephone.value,
       email: event.target.email.value,
-      location: event.target.location.value,
-      province: event.target.province.value,
-      postalCode: event.target.postalCode.value,
-      dateOfBirth: event.target.dateOfBirth.value,
+      location: event.target.location.value.length > 0 ? event.target.location.value : null,
+      province: event.target.province.value.length > 0 ? event.target.province.value : null,
+      postalCode: event.target.postalCode.value.length > 0 ? event.target.postalCode.value : null,
+      dateOfBirth:
+        event.target.dateOfBirth.value.length > 0 ? event.target.dateOfBirth.value : null,
       image: img,
     });
 
@@ -317,7 +364,6 @@ function UserEdit() {
   }
 
   function handleImg(event) {
-    console.log(event.target);
     const file = event.target.files[0];
     const maxSize = 2000000; // 2 MB
 

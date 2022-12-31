@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { Alert, Spinner, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { UserContext } from "../../../Context/UserContext";
-import { deleteUser } from "../../../Services/users.service.js";
+import { UserContext } from "../../../../Context/UserContext";
+import { deleteUser } from "../../../../Services/users.service.js";
 
 export default function DeleteUserModal() {
   const {
@@ -33,7 +33,7 @@ export default function DeleteUserModal() {
           setUserDeleteIsLoading(false);
         })
         .catch((err) => {
-          setUserDeleteError("Hubo un error al realizar la solicitud."); // Almacenar error
+          setUserDeleteError("Error al realizar la solicitud."); // Almacenar error
           setUserDeleteIsLoading(false);
         });
     }
@@ -63,12 +63,13 @@ export default function DeleteUserModal() {
         forma permanente?
       </Modal.Body>
       <Modal.Footer>
-        <Stack gap="2">
+        <Stack direction="horizontal" gap="2">
           {userDeleteError ? (
-            <Alert className="mb-0" variant="danger">
+            <Alert className="my-0 py-1" variant="danger">
               {userDeleteError}
             </Alert>
           ) : null}
+
           {userDeleteIsLoading ? (
             <Button variant="success" disabled>
               <Spinner animation="grow" size="sm" />
@@ -84,6 +85,7 @@ export default function DeleteUserModal() {
               Aceptar
             </Button>
           )}
+
           <Button variant="danger" onClick={() => setUserDeleteModalShow(false)}>
             Cancelar
           </Button>

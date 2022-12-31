@@ -1,18 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AppContext } from "../../../Context/AppContext";
 import { UserContext } from "../../../Context/UserContext";
 import { Container, Row, Col, Image, Stack, Button } from "react-bootstrap";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
-import { useEffect } from "react";
 import { getUser } from "../../../Services/users.service";
+import defaultAvatar from "../../../Img/defaultAvatar.png";
 
-function UserPage() {
+function UserView({ renderingMode = "client" }) {
   const navigate = useNavigate();
-  const { idUser } = useParams(); // ID del usuario en la URL
+  const { user } = useContext(AppContext);
+
+  // Por defecto, idUser es sacado de la URL
+  let idUser = useParams().idUser;
+
+  // Pero si el componente se está renderizando para un cliente, entonces idUser es el del usuario autenticado.
+  if (renderingMode === "client") idUser = user.id;
+
   const {
-    selectedUser,
-    setSelectedUser,
     userViewIsLoading, // Cargando datos
     setUserViewIsLoading,
     userViewData, // Datos
@@ -55,7 +61,11 @@ function UserPage() {
       <Error
         error={userViewError}
         actions={() => {
-          navigate("/dashboard/users/" + idUser);
+          if (renderingMode === "vet") {
+            navigate("/dashboard/users/" + idUser);
+          } else if (renderingMode === "client") {
+            navigate("/dashboard/profile");
+          }
         }}
       />
     );
@@ -69,7 +79,8 @@ function UserPage() {
           className="border"
           width="200px"
           height="200px"
-          src={userViewData.rutaImagen}
+          src={userViewData.rutaImagen ? userViewData.rutaImagen : defaultAvatar}
+          alt="Imagen de usuario"
           roundedCircle
         />
 
@@ -112,7 +123,11 @@ function UserPage() {
           </Row>
           <Row>
             <Col>Fecha nacimiento:</Col>
-            <Col>{new Date(userViewData.fechaNacimiento).toLocaleDateString()}</Col>
+            <Col>
+              {userViewData.fechaNacimiento
+                ? new Date(userViewData.fechaNacimiento).toLocaleDateString()
+                : null}
+            </Col>
           </Row>
           <Row>
             <Col>Tipo de usuario:</Col>
@@ -120,15 +135,22 @@ function UserPage() {
           </Row>
         </Container>
       </Stack>
-      <Button
-        onClick={() => {
-          navigate("/dashboard/users/" + idUser + "/edit");
-        }}
-      >
-        Editar
-      </Button>
+      <div className="d-flex">
+        <Button
+          className="ms-auto"
+          onClick={() => {
+            if (renderingMode === "vet") {
+              navigate("/dashboard/users/" + idUser + "/edit");
+            } else if (renderingMode === "client") {
+              navigate("/dashboard/profile/edit");
+            }
+          }}
+        >
+          Editar
+        </Button>
+      </div>
     </>
   );
 }
 
-export default UserPage;
+export default UserView;

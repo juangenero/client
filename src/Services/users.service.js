@@ -1,4 +1,4 @@
-import clientAxios from "../Utils/axios-instance.js";
+import { clientAxios } from "../Utils/axios-instances.js";
 
 export async function getAllUsers() {
   return await clientAxios.get("/users");

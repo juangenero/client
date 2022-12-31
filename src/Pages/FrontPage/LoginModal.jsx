@@ -27,7 +27,7 @@ export default function LoginModal(props) {
             setUser(decodeJWT()); // Actualizo el estado del usuario para que tenga acceso a Dashboard
             setIsLoading(false); // Deja de cargar la petición de login
             setModalShow(false); // Oculta la ventana de login
-            navigate("/dashboard/pets"); // Redirecciona a Dashboard
+            navigate("/dashboard"); // Redirecciona a Dashboard
 
             // Si no ha devuelto el token, almacena el error
           } else {
@@ -69,6 +69,7 @@ export default function LoginModal(props) {
               name="username"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
+              required
             />
           </FloatingLabel>
 
@@ -79,6 +80,7 @@ export default function LoginModal(props) {
               name="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              required
             />
           </FloatingLabel>
 
@@ -107,6 +109,7 @@ export default function LoginModal(props) {
   // Botón aceptar
   function handleSubmit(event) {
     event.preventDefault();
+
     setIsLoading(true);
   }
 }

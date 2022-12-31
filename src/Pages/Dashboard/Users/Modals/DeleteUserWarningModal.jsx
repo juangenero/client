@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { UserContext } from "../../../Context/UserContext";
+import { UserContext } from "../../../../Context/UserContext";
 
 function DeleteUserWarningModal() {
   const {deleteWarningModalShow, setDeleteWarningModalShow} = useContext(UserContext);

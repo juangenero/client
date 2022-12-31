@@ -1,12 +1,10 @@
-import React, { useContext } from "react";
-
-import FrontPageNav from "./Header/NavFrontPage";
-import PrivateArea from "./Header/PrivateArea";
-import Logo from "./Header/Logo";
+import FrontPageNav from "./FrontPageNav";
+import PrivateArea from "./PrivateArea";
+import Logo from "./Logo";
 import { Stack } from "react-bootstrap";
 
 // Contexto para el login
-import { LoginContextProvider } from "../Context/LoginContext";
+import { LoginContextProvider } from "../../Context/LoginContext";
 
 function Header() {
   return (

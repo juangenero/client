@@ -1,18 +1,20 @@
 import React, { useEffect, useContext } from "react";
 import { getAllUsers, resetUsers } from "../../../Services/users.service.js";
 import { Eye, Pencil, Trash } from "../../../Components/Utils/Icons.jsx";
-import DeleteUserModal from "../../../Components/Modals/Users/DeleteUserModal.jsx";
-import DeleteUserWarningModal from "../../../Components/Modals/Users/DeleteUserWarningModal.jsx";
-import NewUserModal from "../../../Components/Modals/Users/NewUserModal";
+import DeleteUserModal from "./Modals/DeleteUserModal.jsx";
+import DeleteUserWarningModal from "./Modals/DeleteUserWarningModal.jsx";
+import NewUserModal from "./Modals/NewUserModal";
 import { UserContext } from "../../../Context/UserContext";
 import { AppContext } from "../../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
+import { viewToolTip, editToolTip, deleteToolTip } from "../../../Components/Utils/ToolTips.jsx";
 
 // Bootstrap
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
+import { OverlayTrigger } from "react-bootstrap";
 
 export default function UsersList() {
   const navigate = useNavigate();
@@ -117,41 +119,64 @@ export default function UsersList() {
                 <td>{new Date(userListData.fechaAlta).toLocaleDateString()}</td>
                 <td>{userListData.rolUsuario ? "Veterinario" : "Cliente"}</td>
                 <td>
-                  {
-                    <Eye
-                      action={() => {
-                        navigate("/dashboard/users/" + userListData.idUsuario); // Redirige a la página de edición usuario.
-                      }}
-                    />
-                  }
-                  {
-                    <Pencil
-                      action={() => {
-                        navigate("/dashboard/users/" + userListData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
-                      }}
-                    />
-                  }
-                  {
-                    // Mostrar un icono u otro dependiendo de si se trata del usuario autenticado
-                    user.id == userListData.idUsuario ? (
-                      <Trash
-                        disabled={true}
+                  {/** Botón (Ver usuario) */}
+                  <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 50, hide: 150 }}
+                    overlay={viewToolTip}
+                  >
+                    <span>
+                      <Eye
                         action={() => {
-                          setDeleteWarningModalShow(true);
+                          navigate("/dashboard/users/" + userListData.idUsuario); // Redirige a la página de edición usuario.
                         }}
                       />
-                    ) : (
-                      <Trash
+                    </span>
+                  </OverlayTrigger>
+
+                  {/** Botón (Editar usuario) */}
+                  <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 50, hide: 150 }}
+                    overlay={editToolTip}
+                  >
+                    <span>
+                      <Pencil
                         action={() => {
-                          setSelectedUser({
-                            id: userListData.idUsuario,
-                            email: userListData.email,
-                          });
-                          setUserDeleteModalShow(true);
+                          navigate("/dashboard/users/" + userListData.idUsuario + "/edit"); // Redirige a la página de edición usuario.
                         }}
                       />
-                    )
-                  }
+                    </span>
+                  </OverlayTrigger>
+
+                  {/** Botón (Eliminar usuario) */}
+                  <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 50, hide: 150 }}
+                    overlay={deleteToolTip}
+                  >
+                    <span>
+                      {/** Mostrar un icono u otro dependiendo de si se trata del usuario autenticado */}
+                      {user.id == userListData.idUsuario ? (
+                        <Trash
+                          disabled={true}
+                          action={() => {
+                            setDeleteWarningModalShow(true);
+                          }}
+                        />
+                      ) : (
+                        <Trash
+                          action={() => {
+                            setSelectedUser({
+                              id: userListData.idUsuario,
+                              email: userListData.email,
+                            });
+                            setUserDeleteModalShow(true);
+                          }}
+                        />
+                      )}
+                    </span>
+                  </OverlayTrigger>
                 </td>
               </tr>
             )

@@ -12,11 +12,11 @@ function DashboardNav() {
   const navigate = useNavigate(); // Para redirigir en la opción de cerrar sesión.
 
   return (
-    <Navbar fixed="right">
+    <Navbar>
       <Container>
         <Nav>
           {user.rol ? (
-            <Nav.Link as={Link} to="users" className="text-white">
+            <Nav.Link as={Link} to="users" className="text-white" >
               Usuarios
             </Nav.Link>
           ) : (
@@ -38,7 +38,7 @@ function DashboardNav() {
               Vacunas
             </Nav.Link>
           ) : undefined}
-
+  
           <Nav.Link onClick={() => logout(setUser, navigate)} className="text-white">
             Cerrar sesión
           </Nav.Link>

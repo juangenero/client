@@ -1,14 +1,14 @@
 import { Modal, Form, Button, Spinner, Alert, Container, Row, Col } from "react-bootstrap";
 import { useEffect, useContext, useState } from "react";
-import { newUser } from "../../../Services/users.service.js";
-import { UserContext } from "../../../Context/UserContext"; // Contexto de los usuarios
+import { newUser } from "../../../../Services/users.service.js";
+import { UserContext } from "../../../../Context/UserContext"; // Contexto de los usuarios
 import md5 from "md5";
-import imgToBase64 from "../../../Utils/imgToBase64.js";
-import dateFormat from "../../../Utils/dateFormat.js";
+import imgToBase64 from "../../../../Utils/imgToBase64.js";
+import dateFormat from "../../../../Utils/dateFormat.js";
 
 export default function LoginModal() {
   const [img, setImg] = useState(null); // Estado local para almacenar la imagen en base64
-  const [message, setMessage] = useState(null); // Mensaje de usuario insertado
+  const [message, setMessage] = useState(null); // Estado local para el mensaje de usuario insertado
 
   const {
     setUserListIsLoading,
@@ -26,19 +26,33 @@ export default function LoginModal() {
     if (newUserIsLoading) {
       newUser(newUserData)
         .then((res) => {
-          console.log(res);
           // Si no se ha editado el registro..
           if (!(res.data.affectedRows && res.data.affectedRows > 0)) {
             // Si la API ha devuelto errores, comprueba cual es
             if (res.data.error) {
-              if (res.data.error.email && res.data.error.email === "duplicate")
-                setNewUserError("El email introducido ya existe \nen la base de datos.");
+              const email = res.data.error.email;
+              const dni = res.data.error.dni;
+              const telephone = res.data.error.telephone;
 
-              if (res.data.error.dni && res.data.error.dni === "duplicate")
+              if (email && dni && telephone) {
+                setNewUserError(
+                  "El email, dni y teléfono introducidos ya existen en la base de datos."
+                );
+              } else if (email && dni) {
+                setNewUserError("El email y dni introducidos ya existen en la base de datos.");
+              } else if (email && telephone) {
+                setNewUserError("El email y teléfono introducidos ya existen en la base de datos.");
+              } else if (email) {
+                setNewUserError("El email introducido ya existe en la base de datos.");
+              } else if (dni && telephone) {
+                setNewUserError("El dni y teléfono introducidos ya existen en la base de datos.");
+              } else if (dni) {
                 setNewUserError("El dni introducido ya existe en la base de datos.");
-
-              if (res.data.error.telephone && res.data.error.telephone === "duplicate")
+              } else if (telephone) {
                 setNewUserError("El teléfono introducido ya existe en la base de datos.");
+              }else{
+                setNewUserError("Email, dni o teléfono ya existentes!");
+              }
 
               // Si no se ha insertado el registro y existe un error no controlado.
             } else {
@@ -105,14 +119,13 @@ export default function LoginModal() {
                     pattern="^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{6,24}$"
                     title="Minúsculas, mayúsculas, números y entre 6 y 24 carácteres"
                     required
-                    defaultValue="Juan123"
                   />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="name">
                   <Form.Label>Nombre *</Form.Label>
-                  <Form.Control type="text" maxLength={25} required defaultValue="Juan" />
+                  <Form.Control type="text" maxLength={25} required />
                 </Form.Group>
               </Col>
             </Row>
@@ -124,7 +137,6 @@ export default function LoginModal() {
                     type="text"
                     maxLength={50}
                     required
-                    defaultValue="Genero Espinosa"
                   />
                 </Form.Group>
               </Col>
@@ -136,7 +148,6 @@ export default function LoginModal() {
                     minLength={9}
                     maxLength={9}
                     required
-                    defaultValue="97531264H"
                   />
                 </Form.Group>
               </Col>
@@ -150,7 +161,6 @@ export default function LoginModal() {
                     minLength={9}
                     maxLength={9}
                     required
-                    defaultValue="616161617"
                   />
                 </Form.Group>
               </Col>
@@ -161,7 +171,6 @@ export default function LoginModal() {
                     type="email"
                     maxLength={80}
                     required
-                    defaultValue="admin@juan.com"
                   />
                 </Form.Group>
               </Col>
@@ -230,6 +239,7 @@ export default function LoginModal() {
           <Button
             onClick={() => {
               setNewUserModalShow(false);
+              setUserListIsLoading(true);
             }}
             variant="danger"
             className="me-2"
@@ -257,19 +267,20 @@ export default function LoginModal() {
       province: event.target.province.value.length ? event.target.province.value : null,
       postalCode: event.target.postalCode.value.length ? event.target.postalCode.value : null,
       registerDate: dateFormat(new Date()), // Parseo la fecha a formato YYYY-MM-DD, para la BD
-      dateOfBirth: event.target.dateOfBirth.value.length ? event.target.dateOfBirth.value : null, // Si esta vacío, lo pasa a null
+      dateOfBirth: event.target.dateOfBirth.value.length ? event.target.dateOfBirth.value : null,
       rol: event.target.rol.value,
       image: img,
     });
 
+    setMessage(null);
+    setNewUserError(null);
     setNewUserIsLoading(true);
   }
 
   // Imagen de perfil
   function handleImg(event) {
-    console.log(event.target);
     const file = event.target.files[0];
-    const maxSize = 2000000; // 2 MB
+    const maxSize = 2048000; // 2 MB
 
     // Si no supera el tamaño máximo, serializa la imagen
     if (file.size < maxSize) {

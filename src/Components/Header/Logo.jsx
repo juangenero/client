@@ -8,10 +8,12 @@ export default function Logo() {
   return (
     <Image
       width="90px"
+      height="80px"
       src={logo}
       onClick={() => navigate("/")}
       onMouseOver={() => document.body.style.cursor="pointer"}
       onMouseLeave={() => document.body.style.cursor="default"}
+      alt="logo"
     />
   );
 }

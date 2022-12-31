@@ -1,6 +1,6 @@
-import Header from "./Components/Header";
+import Header from "./Components/Header/Header";
 import FrontRoutes from "./Routes/FrontRoutes";
-import Footer from "./Components/Footer";
+import Footer from "./Components/Footer/Footer";
 
 // Bootstrap
 import { Stack } from "react-bootstrap";

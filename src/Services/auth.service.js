@@ -1,9 +1,10 @@
-import clientAxios from "../Utils/axios-instance.js";
-import md5 from "md5";
+import { clientAxios } from "../Utils/axios-instances.js";
 import { decodeToken } from "react-jwt";
+import md5 from "md5";
 
 // Realiza una llamada a la API para la solicitud de inicio de sesión
 export async function login(username, password) {
+  // En realidad es inutil usar aquí el interceptor de axios, pero lo hago por homogeneidad
   return await clientAxios.post("/login", {
     username: username,
     password: password ? md5(password) : "", // Si se ha introducido una contraseña, la encripta
@@ -12,27 +13,38 @@ export async function login(username, password) {
 
 // Elimina el local storage, actualiza el estado del usuario y redirige a la ruta principal
 export function logout(setUser, navigate) {
-  localStorage.clear();
+  deleteToken();
   setUser({ id: null });
   navigate("/");
 }
 
-// Almacena el token en local storage
+/**
+ * Obtiene el token de local storage
+ * @returns El valor del token o null si no existe
+ */
+export function getToken() {
+  return localStorage.getItem("token");
+}
+
+/**
+ * Almacena el token en local storage
+ * @param {String} token Token JWT
+ */
 export function setToken(token) {
   localStorage.setItem("token", token);
 }
 
-// Obtiene el token de local storage
-export function getToken() {
-  const token = localStorage.getItem("token");
-  if (token) return token;
-  return null;
+/**
+ * Elimina el token de local storage
+ */
+export function deleteToken() {
+  localStorage.removeItem("token");
 }
 
-// Decodifica el token de local storage
+/**
+ * Decodifica el token de local storage
+ * @returns Contenido del token o null si no existe
+ */
 export function decodeJWT() {
-  const token = getToken();
-  let result = { id: null };
-  if (token) result = decodeToken(token);
-  return result;
+  return decodeToken(getToken());
 }

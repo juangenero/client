@@ -1,7 +1,7 @@
 /**
- * Convierte una fecha
+ * Convierte una fecha en formato YYYY-MM-DD
  * @param {Date} date fecha
- * @returns fecha en formato YYYY-MM-DD
+ * @returns fecha formateada
  */
 function dateFormat(date) {
   let day = date.getDate();

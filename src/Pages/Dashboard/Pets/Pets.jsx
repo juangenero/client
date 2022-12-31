@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
+import { Button, Stack } from "react-bootstrap";
 
 export default function Pets() {
   const [isLoading, setIsLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState(null);
   const [error, setError] = useState(null);
 
-  console.log("isLoading", isLoading);
-
   useEffect(() => {
-    console.log("useEffect");
-
     if (isLoading) {
       async function fetchData() {
         try {
@@ -37,7 +34,6 @@ export default function Pets() {
   if (isLoading) {
     return (
       <div className="App">
-        {console.log("render cargando")}
         <h1>Cargando...</h1>
       </div>
     );
@@ -47,7 +43,6 @@ export default function Pets() {
     // ⬅️ mostramos el error (si es que existe)
     return (
       <div className="App">
-        {console.log("render error")}
         <h1>{error}</h1>
         <button onClick={randomDog}>Volver a intentarlo</button>
       </div>
@@ -55,15 +50,12 @@ export default function Pets() {
   }
 
   return (
-    <div className="App">
-      {console.log("render data")}
-      <img src={imageUrl} alt="Imagen de perrito aleatoria" />
-      <button onClick={randomDog}>
-        ¡Otro!{" "}
-        <span role="img" aria-label="corazón">
-          ❤️
-        </span>
-      </button>
-    </div>
+    <>
+      <Button onClick={randomDog}>¡Otro ❤️!</Button>
+      <Stack>
+        <br />
+        <img width="600px" src={imageUrl} />
+      </Stack>
+    </>
   );
 }

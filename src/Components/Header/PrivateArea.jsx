@@ -1,5 +1,5 @@
 import Button from "react-bootstrap/Button";
-import LoginModal from "../Modals/LoginModal"; // Componente login con el modal
+import LoginModal from "../../Pages/FrontPage/LoginModal"; // Componente login con el modal
 import { useState, useContext } from "react"; // Hook de react para el estado del modal
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ export default function PrivateArea() {
     <>
       {
         // Renderizado condicional del botón, depende de si el usuario está logueado
-        user.id ? (
+        user && user.id ? (
           <Button variant="primary" onClick={() => navigate("/dashboard/pets")}>
             Área personal
           </Button>
