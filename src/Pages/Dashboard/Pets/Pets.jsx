@@ -40,7 +40,7 @@ export default function Pets() {
   }
 
   if (error) {
-    // ⬅️ mostramos el error (si es que existe)
+    // mostramos el error (si es que existe)
     return (
       <div className="App">
         <h1>{error}</h1>

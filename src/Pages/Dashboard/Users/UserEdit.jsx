@@ -49,6 +49,7 @@ function UserEdit({ renderingMode = "client" }) {
           // Si la petición se ha ejecutado correctamente
           if (res.status === 200) {
             setUserEditShowInfoData(res.data); // Guardar datos en el estado
+            setImg(res.data.rutaImagen) // Guardo la imagen de la BD en el estado (local) de forma independiente
             if (res.data.error) {
               setUserEditShowInfoError(res.data.error); // Almacenar error enviado por la API.
             }
@@ -359,7 +360,6 @@ function UserEdit({ renderingMode = "client" }) {
     // Restablecer los 2 estados de los mensajes, por para que no se muestren ambos
     setUserEditSubmitInfoError(null);
     setUserEditSubmitInfoMessage(null);
-
     setUserEditSubmitInfoIsLoading(true); // Estado "cargando" de la segunda llamada a la API para editar el usuario
   }
 
@@ -369,8 +369,8 @@ function UserEdit({ renderingMode = "client" }) {
 
     // Si no supera el tamaño máximo, serializa la imagen
     if (file.size < maxSize) {
-      imgToBase64(file, (res) => {
-        setImg(res);
+      imgToBase64(file, (fileSerialized) => {
+        setImg(fileSerialized);
       });
     } else {
       event.target.value = "";

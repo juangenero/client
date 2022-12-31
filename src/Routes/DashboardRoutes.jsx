@@ -11,6 +11,8 @@ import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
 import { UserContext } from "../Context/UserContext"; // Contexto del usuario
+import VaccinesList from "../Pages/Dashboard/Vaccines/VaccinesList";
+import { VaccineContext } from "../Context/VaccineContext";
 
 {
   /**
@@ -30,6 +32,7 @@ function DashboardRoutes() {
   // Contextos
   const { user } = useContext(AppContext);
 
+  // Usuarios
   const {
     // Listado usuarios
     setUserListIsLoading,
@@ -48,6 +51,20 @@ function DashboardRoutes() {
     setUserEditSubmitInfoMessage,
     setUserEditSubmitInfoError,
   } = useContext(UserContext);
+
+  // Mascotas
+
+  // Consultas
+
+  // Vacunas
+  const {
+    vaccineListIsLoading,
+    setVaccineListIsLoading,
+    vaccineListData,
+    setVaccineListData,
+    vaccineListError,
+    setVaccineListError,
+  } = useContext(VaccineContext);
 
   // Limpiar estados de todo del dashboard cuando se cambia de ruta (Los estados de los modals se eliminan al ocultarse)
   useEffect(() => {
@@ -81,6 +98,13 @@ function DashboardRoutes() {
       setUserEditSubmitInfoMessage(null);
       setUserEditSubmitInfoError(null);
     }
+
+    // Listado de vacunas
+    else if (currentRoute === "/dashboard/vaccines") {
+      setVaccineListIsLoading(true);
+      setVaccineListData(null);
+      setVaccineListError(null);
+    }
   }, [location]);
 
   return (
@@ -109,7 +133,7 @@ function DashboardRoutes() {
       <Route path="/consults" element={<h1>Consultas</h1>} />
 
       {/** Ruta para administrar las vacunas */}
-      {user.rol ? <Route path="/vaccines" element={<h1>Vacunas</h1>} /> : null}
+      {user.rol ? <Route path="/vaccines" element={<VaccinesList />} /> : null}
 
       {/** El resto de rutas no existentes que cuelguen de dashboard, redireccionará a mascotas */}
       <Route path="*" element={<Navigate replace to="/dashboard/pets" />} />

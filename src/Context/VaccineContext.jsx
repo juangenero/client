@@ -6,10 +6,21 @@ export const VaccineContext = createContext();
 
 // Envoltorio para el login donde se usará el contexto definido anteriormente
 export function VaccineContextProvider(props) {
-  const [test, setTest] = useState(false);
+  const [vaccineListIsLoading, setVaccineListIsLoading] = useState(true);
+  const [vaccineListData, setVaccineListData] = useState(null);
+  const [vaccineListError, setVaccineListError] = useState(null);
 
   return (
-    <VaccineContext.Provider value={{ test, setTest }}>
+    <VaccineContext.Provider
+      value={{
+        vaccineListIsLoading,
+        setVaccineListIsLoading,
+        vaccineListData,
+        setVaccineListData,
+        vaccineListError,
+        setVaccineListError,
+      }}
+    >
       {props.children}
     </VaccineContext.Provider>
   );
