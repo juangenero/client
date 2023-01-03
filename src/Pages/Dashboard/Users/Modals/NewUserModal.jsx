@@ -229,11 +229,11 @@ export default function LoginModal() {
           {newUserIsLoading ? (
             <Button variant="success" className="me-2" disabled>
               <Spinner animation="grow" size="sm" />
-              Aceptar
+              Añadir
             </Button>
           ) : (
             <Button type="submit" variant="success" className="me-2">
-              Aceptar
+              Añadir
             </Button>
           )}
           <Button

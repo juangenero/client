@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useContext } from "react";
 import { getAllVaccines } from "../../../Services/vaccines.service.js";
 import { VaccineContext } from "../../../Context/VaccineContext";
-import { Table, Button } from "react-bootstrap";
-import { Pencil, Trash } from "../../../Components/Utils/Icons";
+import { Table, Button, OverlayTrigger } from "react-bootstrap";
+import { Eye, Pencil, Trash } from "../../../Components/Utils/Icons";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
 import { useNavigate } from "react-router-dom";
+import { viewToolTip, editToolTip, deleteToolTip } from "../../../Components/Utils/ToolTips";
 
 function VaccinesList() {
   const navigate = useNavigate();
@@ -72,8 +73,45 @@ function VaccinesList() {
               <td>{vaccine.vacuna}</td>
               <td>{vaccine.observaciones}</td>
               <td>
-                <Pencil />
-                <Trash />
+                <OverlayTrigger
+                  placement="top"
+                  delay={{ show: 50, hide: 150 }}
+                  overlay={viewToolTip}
+                >
+                  <span>
+                    <Eye
+                      action={() => {
+                        navigate("/dashboard/vaccines/" + vaccine.idVacuna); // Redirige a la página de vista de vacuna.
+                      }}
+                    />
+                  </span>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  delay={{ show: 50, hide: 150 }}
+                  overlay={editToolTip}
+                >
+                  <span>
+                    <Pencil
+                      action={() => {
+                        navigate("/dashboard/vaccines/" + vaccine.idVacuna + "/edit"); // Redirige a la página de edición de vacuna.
+                      }}
+                    />
+                  </span>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  delay={{ show: 50, hide: 150 }}
+                  overlay={deleteToolTip}
+                >
+                  <span>
+                    <Trash
+                      action={() => {
+                        alert("Eliminando vacuna " + vaccine.idVacuna);
+                      }}
+                    />
+                  </span>
+                </OverlayTrigger>
               </td>
             </tr>
           ))}

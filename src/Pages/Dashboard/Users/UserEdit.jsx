@@ -49,7 +49,7 @@ function UserEdit({ renderingMode = "client" }) {
           // Si la petición se ha ejecutado correctamente
           if (res.status === 200) {
             setUserEditShowInfoData(res.data); // Guardar datos en el estado
-            setImg(res.data.rutaImagen) // Guardo la imagen de la BD en el estado (local) de forma independiente
+            setImg(res.data.rutaImagen); // Guardo la imagen de la BD en el estado (local) de forma independiente
             if (res.data.error) {
               setUserEditShowInfoError(res.data.error); // Almacenar error enviado por la API.
             }
@@ -357,7 +357,7 @@ function UserEdit({ renderingMode = "client" }) {
       image: img,
     });
 
-    // Restablecer los 2 estados de los mensajes, por para que no se muestren ambos
+    // Restablecer los 2 estados de los mensajes, para que no se muestren ambos
     setUserEditSubmitInfoError(null);
     setUserEditSubmitInfoMessage(null);
     setUserEditSubmitInfoIsLoading(true); // Estado "cargando" de la segunda llamada a la API para editar el usuario

@@ -9,7 +9,7 @@ import { AppContext } from "../../../Context/AppContext";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
-import { viewToolTip, editToolTip, deleteToolTip } from "../../../Components/Utils/ToolTips.jsx";
+import { viewToolTip, editToolTip, deleteToolTip } from "../../../Components/Utils/ToolTips";
 
 // Bootstrap
 import Table from "react-bootstrap/Table";

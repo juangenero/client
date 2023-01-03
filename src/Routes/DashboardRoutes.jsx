@@ -5,13 +5,17 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 // Contenido de las rutas
 import UsersList from "../Pages/Dashboard/Users/UsersList";
-import Pets from "../Pages/Dashboard/Pets/Pets";
 import UserView from "../Pages/Dashboard/Users/UserView";
 import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
+import Pets from "../Pages/Dashboard/Pets/Pets";
+
+import VaccinesList from "../Pages/Dashboard/Vaccines/VaccinesList";
+import VaccineView from "../Pages/Dashboard/Vaccines/VaccineView";
+import VaccineEdit from "../Pages/Dashboard/Vaccines/VaccineEdit";
+
 import { AppContext } from "../Context/AppContext"; // Contexto de la aplicación
 import { UserContext } from "../Context/UserContext"; // Contexto del usuario
-import VaccinesList from "../Pages/Dashboard/Vaccines/VaccinesList";
 import { VaccineContext } from "../Context/VaccineContext";
 
 {
@@ -58,15 +62,29 @@ function DashboardRoutes() {
 
   // Vacunas
   const {
-    vaccineListIsLoading,
+    // Listado de vacunas
     setVaccineListIsLoading,
-    vaccineListData,
     setVaccineListData,
-    vaccineListError,
     setVaccineListError,
+
+    // Vista de vacunas
+    setVaccineViewIsLoading,
+    setVaccineViewData,
+    setVaccineViewError,
+
+    // Edición de vacunas
+    setVaccineEditShowInfoIsLoading,
+    setVaccineEditShowInfoData,
+    setVaccineEditShowInfoError,
+    setVaccineEditSubmitInfoIsLoading,
+    setVaccineEditSubmitInfoMessage,
+    setVaccineEditSubmitInfoError,
+
+    // Listado de mascotas
+
   } = useContext(VaccineContext);
 
-  // Limpiar estados de todo del dashboard cuando se cambia de ruta (Los estados de los modals se eliminan al ocultarse)
+  // Limpiar estados de todo el dashboard cuando se cambia de ruta (Los estados de los modals se eliminan al ocultarse)
   useEffect(() => {
     const currentRoute = location.pathname; // Ruta actual
 
@@ -105,6 +123,23 @@ function DashboardRoutes() {
       setVaccineListData(null);
       setVaccineListError(null);
     }
+
+    // Vista de vacuna
+    else if (currentRoute.match("/dashboard/vaccines/[0-9]{1,9}$")) {
+      setVaccineViewIsLoading(true);
+      setVaccineViewData(null);
+      setVaccineViewError(null);
+    }
+
+    // Edición de vacunas
+    else if (currentRoute.match("/dashboard/vaccines/[0-9]{1,9}/edit$")) {
+      setVaccineEditShowInfoIsLoading(true);
+      setVaccineEditShowInfoData(null);
+      setVaccineEditShowInfoError(null);
+      setVaccineEditSubmitInfoIsLoading(false);
+      setVaccineEditSubmitInfoMessage(null);
+      setVaccineEditSubmitInfoError(null);
+    }
   }, [location]);
 
   return (
@@ -134,6 +169,8 @@ function DashboardRoutes() {
 
       {/** Ruta para administrar las vacunas */}
       {user.rol ? <Route path="/vaccines" element={<VaccinesList />} /> : null}
+      {user.rol ? <Route path="/vaccines/:idVaccine" element={<VaccineView />} /> : null}
+      {user.rol ? <Route path="/vaccines/:idVaccine/edit" element={<VaccineEdit />} /> : null}
 
       {/** El resto de rutas no existentes que cuelguen de dashboard, redireccionará a mascotas */}
       <Route path="*" element={<Navigate replace to="/dashboard/pets" />} />
