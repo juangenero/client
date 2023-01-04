@@ -25,6 +25,13 @@ export function VaccineContextProvider(props) {
   const [vaccineEditSubmitInfoIsLoading, setVaccineEditSubmitInfoIsLoading] = useState(false);
   const [vaccineEditSubmitInfoMessage, setVaccineEditSubmitInfoMessage] = useState(null);
   const [vaccineEditSubmitInfoError, setVaccineEditSubmitInfoError] = useState(null);
+
+  // Eliminar vacunas
+  const [vaccineDeleteModal, setVaccineDeleteModal] = useState(false);
+  const [vaccineDeleteIsLoading, setVaccineDeleteIsLoading] = useState(false);
+  const [vaccineDeleteError, setVaccineDeleteError] = useState(null);
+  const [selectedVaccine, setSelectedVaccine] = useState(null);
+
   return (
     <VaccineContext.Provider
       value={{
@@ -58,6 +65,15 @@ export function VaccineContextProvider(props) {
         vaccineEditSubmitInfoError,
         setVaccineEditSubmitInfoError,
 
+        // Eliminar vacunas
+        vaccineDeleteModal,
+        setVaccineDeleteModal,
+        vaccineDeleteIsLoading,
+        setVaccineDeleteIsLoading,
+        vaccineDeleteError,
+        setVaccineDeleteError,
+        selectedVaccine,
+        setSelectedVaccine,
       }}
     >
       {props.children}

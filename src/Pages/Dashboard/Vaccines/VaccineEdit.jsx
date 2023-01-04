@@ -3,10 +3,9 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useContext } from "react";
 import { Button, Col, Container, Row, Form, Alert, Spinner } from "react-bootstrap";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Error from "../../../Components/Utils/Error";
 import Loading from "../../../Components/Utils/Loading";
-import { UserContext } from "../../../Context/UserContext";
 import { VaccineContext } from "../../../Context/VaccineContext";
 import { editVaccine, getVaccine } from "../../../Services/vaccines.service";
 
@@ -55,6 +54,7 @@ function VaccineEdit() {
           setVaccineEditShowInfoIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vaccineEditShowInfoIsLoading]);
 
   // 2º llamada a la API (editar datos)
@@ -84,6 +84,7 @@ function VaccineEdit() {
           setVaccineEditSubmitInfoIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vaccineEditSubmitInfoIsLoading]);
 
   if (vaccineEditShowInfoIsLoading) {

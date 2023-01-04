@@ -43,6 +43,7 @@ export default function LoginModal(props) {
           setIsLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   // Efecto para resetear el formulario de login cuando se oculta

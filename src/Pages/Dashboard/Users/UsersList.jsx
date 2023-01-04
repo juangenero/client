@@ -53,6 +53,7 @@ export default function UsersList() {
           setUserListIsLoading(false); // Cambiar estado, ocurrió un error
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userListIsLoading]);
 
   // Si se ha producido un error, muestra el mensaje
@@ -157,7 +158,7 @@ export default function UsersList() {
                   >
                     <span>
                       {/** Mostrar un icono u otro dependiendo de si se trata del usuario autenticado */}
-                      {user.id == userListData.idUsuario ? (
+                      {user.id === userListData.idUsuario ? (
                         <Trash
                           disabled={true}
                           action={() => {

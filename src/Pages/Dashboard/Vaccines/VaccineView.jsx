@@ -42,6 +42,7 @@ function VaccineView() {
           setVaccineViewIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vaccineViewIsLoading]);
 
   // Si está cargando

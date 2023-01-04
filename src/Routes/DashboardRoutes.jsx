@@ -18,17 +18,15 @@ import { AppContext } from "../Context/AppContext"; // Contexto de la aplicació
 import { UserContext } from "../Context/UserContext"; // Contexto del usuario
 import { VaccineContext } from "../Context/VaccineContext";
 
-{
-  /**
-   * Esta sección indica que componente se va a renderizar cuando se visite X ruta.
-   *
-   * Las rutas "profile", "users" y "vaccines" sólo renderizarán el componente si el rol tiene permisos
-   * para visualizarlo.
-   *
-   * Las rutas "pets" y "consults" son comunes a los 2 roles, renderizan el mismo componente, aunque
-   * dependiendo del rol, tendrá una funcionalidad distinta.
-   */
-}
+/**
+ * Esta sección indica que componente se va a renderizar cuando se visite X ruta.
+ *
+ * Las rutas "profile", "users" y "vaccines" sólo renderizarán el componente si el rol tiene permisos
+ * para visualizarlo.
+ *
+ * Las rutas "pets" y "consults" son comunes a los 2 roles, renderizan el mismo componente, aunque
+ * dependiendo del rol, tendrá una funcionalidad distinta.
+ */
 
 function DashboardRoutes() {
   const location = useLocation(); // Hook de react-router-dom
@@ -81,7 +79,6 @@ function DashboardRoutes() {
     setVaccineEditSubmitInfoError,
 
     // Listado de mascotas
-
   } = useContext(VaccineContext);
 
   // Limpiar estados de todo el dashboard cuando se cambia de ruta (Los estados de los modals se eliminan al ocultarse)
@@ -140,6 +137,7 @@ function DashboardRoutes() {
       setVaccineEditSubmitInfoMessage(null);
       setVaccineEditSubmitInfoError(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   return (

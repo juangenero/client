@@ -3,55 +3,55 @@ import { useContext } from "react";
 import { Alert, Spinner, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { UserContext } from "../../../../Context/UserContext";
-import { deleteUser } from "../../../../Services/users.service.js";
+import { VaccineContext } from "../../../../Context/VaccineContext";
+import { deleteVaccine } from "../../../../Services/vaccines.service";
 
 export default function DeleteUserModal() {
   const {
-    userDeleteModalShow, // Modal
-    setUserDeleteModalShow,
-    userDeleteIsLoading, // Cargar
-    setUserDeleteIsLoading,
-    userDeleteError, // Mensaje de error
-    setUserDeleteError,
-    selectedUser, // Datos pasados desde UserList
-    setUserListIsLoading, // Para actualizar la lista de usuarios
-  } = useContext(UserContext);
+    vaccineDeleteModal, // modal
+    setVaccineDeleteModal,
+    vaccineDeleteIsLoading, // llamada a la API
+    setVaccineDeleteIsLoading,
+    vaccineDeleteError, // Errores
+    setVaccineDeleteError,
+    selectedVaccine, // Vacuna seleccionada
+    setVaccineListIsLoading, // Refrescar listado de vacunas
+  } = useContext(VaccineContext);
 
   useEffect(() => {
-    if (userDeleteIsLoading) {
-      deleteUser(selectedUser.id)
+    if (vaccineDeleteIsLoading) {
+      deleteVaccine(selectedVaccine.id)
         .then((res) => {
           // Si se ha eliminado el usuario
           if (res.data.affectedRows > 0) {
-            setUserListIsLoading(true); // Pone a cargar la lista de usuarios
-            setUserDeleteModalShow(false); // Oculta la ventana de confirmar eliminación
+            setVaccineListIsLoading(true); // Pone a cargar la lista de usuarios
+            setVaccineDeleteModal(false); // Oculta la ventana de confirmar eliminación
           } else if (res.data.error) {
-            setUserDeleteError(res.data.error);
+            setVaccineDeleteError(res.data.error);
           }
 
-          setUserDeleteIsLoading(false);
+          setVaccineDeleteIsLoading(false);
         })
         .catch((err) => {
-          setUserDeleteError("Error al realizar la solicitud."); // Almacenar error
-          setUserDeleteIsLoading(false);
+          setVaccineDeleteError("Error al realizar la solicitud."); // Almacenar error
+          setVaccineDeleteIsLoading(false);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDeleteIsLoading]);
+  }, [vaccineDeleteIsLoading]);
 
   // Limpiar estados al cerrar el modal
   useEffect(() => {
-    if (!userDeleteModalShow) {
-      setUserListIsLoading(false);
-      setUserDeleteError(null);
+    if (!vaccineDeleteModal) {
+      setVaccineDeleteIsLoading(false);
+      setVaccineDeleteError(null);
     }
   });
 
   return (
     <Modal
-      show={userDeleteModalShow}
-      onHide={() => setUserDeleteModalShow(false)}
+      show={vaccineDeleteModal}
+      onHide={() => setVaccineDeleteModal(false)}
       backdrop="static"
       keyboard={false}
     >
@@ -60,18 +60,18 @@ export default function DeleteUserModal() {
       </Modal.Header>
       <Modal.Body>
         {/** Necesito poner este condicional, ya que cuando carga el modal en oculto, intenta renderizar datos que aún no existen */}
-        ¿Seguro que quieres eliminar al usuario <b>{selectedUser ? selectedUser.email : null}</b> de
-        forma permanente?
+        ¿Seguro que quieres eliminar la vacuna{" "}
+        <b>{selectedVaccine ? selectedVaccine.nombre : null}</b> de forma permanente?
       </Modal.Body>
       <Modal.Footer>
         <Stack direction="horizontal" gap="2">
-          {userDeleteError ? (
+          {vaccineDeleteError ? (
             <Alert className="my-0 py-1" variant="danger">
-              {userDeleteError}
+              {vaccineDeleteError}
             </Alert>
           ) : null}
 
-          {userDeleteIsLoading ? (
+          {vaccineDeleteIsLoading ? (
             <Button variant="success" disabled>
               <Spinner animation="grow" size="sm" />
               Aceptar
@@ -80,14 +80,14 @@ export default function DeleteUserModal() {
             <Button
               variant="success"
               onClick={async () => {
-                setUserDeleteIsLoading(true); // Llamar a la API
+                setVaccineDeleteIsLoading(true); // Llamar a la API
               }}
             >
               Aceptar
             </Button>
           )}
 
-          <Button variant="danger" onClick={() => setUserDeleteModalShow(false)}>
+          <Button variant="danger" onClick={() => setVaccineDeleteModal(false)}>
             Cancelar
           </Button>
         </Stack>

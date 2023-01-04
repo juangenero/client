@@ -4,7 +4,7 @@ import { UserContext } from "../../../Context/UserContext";
 import React, { useEffect, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { editUser, getUser } from "../../../Services/users.service.js";
-import { Container, Row, Col, Alert, Stack, Spinner, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Alert, Spinner, Form, Button } from "react-bootstrap";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
 import md5 from "md5";
@@ -64,6 +64,7 @@ function UserEdit({ renderingMode = "client" }) {
           setUserEditShowInfoIsLoading(false); // Cambiar el estado, puesto que ocurrió un error
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEditShowInfoIsLoading]);
 
   // Enviar datos al servidor
@@ -119,6 +120,7 @@ function UserEdit({ renderingMode = "client" }) {
           setUserEditSubmitInfoIsLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEditSubmitInfoIsLoading]);
 
   // Si está cargando (llamada a la API para cargar datos en el formulario)

@@ -1,6 +1,6 @@
 import Button from "react-bootstrap/Button";
 import LoginModal from "../../Pages/FrontPage/LoginModal"; // Componente login con el modal
-import { useState, useContext } from "react"; // Hook de react para el estado del modal
+import { useContext } from "react"; // Hook de react para el estado del modal
 import { useNavigate } from "react-router-dom";
 
 // Contextos de los estados

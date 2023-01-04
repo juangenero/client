@@ -71,6 +71,7 @@ export default function LoginModal() {
           setNewUserIsLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newUserIsLoading]);
 
   // Efecto para resetear el formulario cuando se oculta
@@ -81,6 +82,7 @@ export default function LoginModal() {
       setNewUserData(null);
       setNewUserIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newUserModalShow]);
 
   return (

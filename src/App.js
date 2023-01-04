@@ -2,7 +2,7 @@ import Header from "./Components/Header/Header";
 import FrontRoutes from "./Routes/FrontRoutes";
 import Footer from "./Components/Footer/Footer";
 
-// Bootstrap
+// Bootstrap 
 import { Stack } from "react-bootstrap";
 
 function App() {
