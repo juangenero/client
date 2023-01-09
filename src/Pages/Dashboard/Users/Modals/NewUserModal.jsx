@@ -22,6 +22,7 @@ export default function LoginModal() {
     setNewUserError,
   } = useContext(UserContext);
 
+  // Llamada a la API
   useEffect(() => {
     if (newUserIsLoading) {
       newUser(newUserData)
@@ -223,11 +224,8 @@ export default function LoginModal() {
               </Col>
             </Row>
           </Container>
-
-          {/** Mensaje de error */}
-          {0 ? <Alert variant="danger">mensaje</Alert> : null}
-
-          {/** Botones del formulario de Login */}
+          
+          {/** Botones del formulario */}
           {newUserIsLoading ? (
             <Button variant="success" className="me-2" disabled>
               <Spinner animation="grow" size="sm" />

@@ -6,7 +6,7 @@ import { Container, Row, Col, Image, Stack, Button } from "react-bootstrap";
 import Loading from "../../../Components/Utils/Loading";
 import Error from "../../../Components/Utils/Error";
 import { getUser } from "../../../Services/users.service";
-import defaultAvatar from "../../../Img/defaultAvatar.png";
+import defaultUserAvatar from "../../../Img/defaultUserAvatar.png";
 
 function UserView({ renderingMode = "client" }) {
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ function UserView({ renderingMode = "client" }) {
           className="border"
           width="200px"
           height="200px"
-          src={userViewData.rutaImagen ? userViewData.rutaImagen : defaultAvatar}
+          src={userViewData.rutaImagen ? userViewData.rutaImagen : defaultUserAvatar}
           alt="Imagen de usuario"
           roundedCircle
         />

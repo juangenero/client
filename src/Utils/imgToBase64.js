@@ -5,7 +5,7 @@ function imgToBase64(image, callback) {
   if (image) reader.readAsDataURL(image); // Intenta leer la imagen
   else callback(null);
 
-  // Si todo va bien, devuelve con una función de callback la imagen en base64
+  // Si todo va bien, devuelve en una función de callback la imagen en base64
   reader.onload = () => {
     callback(reader.result);
   };

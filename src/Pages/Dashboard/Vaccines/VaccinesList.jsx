@@ -9,6 +9,7 @@ import Error from "../../../Components/Utils/Error";
 import { useNavigate } from "react-router-dom";
 import { viewToolTip, editToolTip, deleteToolTip } from "../../../Components/Utils/ToolTips";
 import DeleteVaccineModal from "../../../Pages/Dashboard/Vaccines/Modals/DeleteVaccineModal";
+import NewVaccineModal from "./Modals/NewVaccineModal.jsx";
 
 function VaccinesList() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function VaccinesList() {
     setVaccineListError,
     setVaccineDeleteModal, // Mostrar modal de eliminar vacuna
     setSelectedVaccine, // Pasar datos al modal de eliminar vacuna
+    setNewVaccineModal, // Mostrar modal para crear vacuna
   } = useContext(VaccineContext);
 
   useEffect(() => {
@@ -60,7 +62,14 @@ function VaccinesList() {
 
   return (
     <>
-      <Button className="mb-2">Nueva vacuna</Button>
+      <Button
+        onClick={() => {
+          setNewVaccineModal(true);
+        }}
+        className="mb-2"
+      >
+        Nueva vacuna
+      </Button>
       {vaccineListData.length > 0 ? (
         <Table striped bordered hover>
           <thead>
@@ -131,6 +140,7 @@ function VaccinesList() {
         </div>
       )}
 
+      <NewVaccineModal />
       <DeleteVaccineModal />
     </>
   );

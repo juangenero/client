@@ -15,3 +15,7 @@ export async function editVaccine(vaccine) {
 export async function deleteVaccine(id) {
   return await clientAxios.delete("/vaccines/" + id);
 }
+
+export async function newVaccine(vaccine) {
+  return await clientAxios.post("/vaccines", vaccine);
+}

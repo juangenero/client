@@ -132,6 +132,7 @@ function VaccineEdit() {
                 type="text"
                 defaultValue={vaccineEditShowInfoData.vacuna}
                 minLength={3}
+                maxLength={50}
                 required
               />
             </Form.Group>
@@ -146,6 +147,7 @@ function VaccineEdit() {
                 as="textarea"
                 rows={2}
                 defaultValue={vaccineEditShowInfoData.observaciones}
+                maxLength={250}
               />
             </Form.Group>
           </Col>
