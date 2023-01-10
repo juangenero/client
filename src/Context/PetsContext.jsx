@@ -12,6 +12,9 @@ export function PetsContextProvider(props) {
   const [petsListError, setPetsListError] = useState(null);
 
   // Vista de mascotas
+  const [petsViewIsLoading, setPetsViewIsLoading] = useState(true);
+  const [petsViewData, setPetsViewData] = useState(null);
+  const [petsViewError, setPetsViewError] = useState(null);
 
   // Edición de mascotas
 
@@ -29,6 +32,14 @@ export function PetsContextProvider(props) {
         setPetsListData,
         petsListError,
         setPetsListError,
+
+        // Perfil de mascota
+        petsViewIsLoading,
+        setPetsViewIsLoading,
+        petsViewData,
+        setPetsViewData,
+        petsViewError,
+        setPetsViewError,
       }}
     >
       {props.children}

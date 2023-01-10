@@ -8,7 +8,8 @@ import UsersList from "../Pages/Dashboard/Users/UsersList";
 import UserView from "../Pages/Dashboard/Users/UserView";
 import UserEdit from "../Pages/Dashboard/Users/UserEdit";
 
-import PetsList from "../Pages/Dashboard/Pets/PetsList";
+import PetsListVetView from "../Pages/Dashboard/Pets/PetsListVetView";
+import PetsListClientView from "../Pages/Dashboard/Pets/PetsListClientView";
 
 import VaccinesList from "../Pages/Dashboard/Vaccines/VaccinesList";
 import VaccineView from "../Pages/Dashboard/Vaccines/VaccineView";
@@ -18,6 +19,7 @@ import { AppContext } from "../Context/AppContext"; // Contexto de la aplicació
 import { UserContext } from "../Context/UserContext"; // Contexto del usuario
 import { VaccineContext } from "../Context/VaccineContext"; // Contexto de vacunas
 import { PetsContext } from "../Context/PetsContext"; // Contexto de mascotas
+import PetsView from "../Pages/Dashboard/Pets/PetsView";
 
 /**
  * Esta sección indica que componente se va a renderizar cuando se visite X ruta dentro de "dashboard"
@@ -167,7 +169,6 @@ function DashboardRoutes() {
       {user.rol ? null : (
         <Route path="/profile/edit" element={<UserEdit renderingMode="client" />} />
       )}
-
       {/** ADMINISTRAR USUARIOS */}
       {user.rol ? (
         <>
@@ -178,10 +179,8 @@ function DashboardRoutes() {
       ) : null}
 
       {/** ADMINISTRAR MASCOTAS */}
-      <Route
-        path="/pets"
-        element={user.rol ? <PetsList renderingMode="vet" /> : <PetsList renderingMode="client" />}
-      />
+      <Route path="/pets" element={user.rol ? <PetsListVetView /> : <PetsListClientView />} />
+      <Route path="/pets/:idPet" element={<PetsView />} />
 
       {/** ADMINISTRAR CONSULTAS */}
       <Route path="/consults" element={<h1>Consultas</h1>} />
@@ -190,7 +189,6 @@ function DashboardRoutes() {
       {user.rol ? <Route path="/vaccines" element={<VaccinesList />} /> : null}
       {user.rol ? <Route path="/vaccines/:idVaccine" element={<VaccineView />} /> : null}
       {user.rol ? <Route path="/vaccines/:idVaccine/edit" element={<VaccineEdit />} /> : null}
-
       {/** El resto de rutas no existentes que cuelguen de dashboard, redireccionará a mascotas */}
       <Route path="*" element={<Navigate replace to="/dashboard/pets" />} />
     </Routes>
